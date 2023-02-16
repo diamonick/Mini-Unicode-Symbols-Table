@@ -64,6 +64,9 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+Mini Unicode Symbols Table/Library
+Mini Unicode Symbols Table/Temp
+
 # Packed Addressables
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 
