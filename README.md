@@ -1,0 +1,2 @@
+# Mini-Unicode-Symbols-Table
+ 
