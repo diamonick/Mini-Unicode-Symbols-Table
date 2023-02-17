@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,15 +11,17 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
     private string copyTooltip = "Click this to copy the previewed Unicode symbol and paste it anywhere.";
 
-    //private char startChar;
     private GUIStyle symbolButtonStyle;
     private GUIStyle copyButtonStyle;
 
+    private bool infoFoldout = false;
+
     private List<UnicodeSymbol> unicodeSymbols;
     private bool unicodeSymbolsInitialized = false;
-    private readonly int rowCount = 10;
-    private readonly int columnCount = 10;
-    private char currentSymbolPreview = ' ';
+    private readonly int rowCount = 5;
+    private readonly int columnCount = 20;
+    private UnicodeSymbol selectedSymbol = null;
+    private int selectedIndex = 0;
 
     /// <summary>
     /// Display the Mini Unicode Symbols Table menu item. (Tools -> Mini Unicode Symbols Table)
@@ -65,20 +68,53 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             fontStyle = FontStyle.Bold,
             fontSize = 72,
             stretchWidth = true,
-            stretchHeight = false
+            stretchHeight = false,
+            alignment = TextAnchor.MiddleCenter
         };
 
         InitializeUnicodeSymbols();
 
-        GUIContent copyContent = new GUIContent("Copy", copyTooltip);
-        EditorGUILayout.SelectableLabel(currentSymbolPreview.ToString(), symbolPreviewStyle, GUILayout.Height(96f));
-        GUI.backgroundColor = AddColor("#297bff") * 2;
+        #region Preview Box
+        GUI.backgroundColor = AddColor("#0062ff") * 2.5f;
+        GUILayout.BeginVertical(GUI.skin.box);
+        #region Header
         GUILayout.Box("Preview", previewHeaderStyle);
         GUI.backgroundColor = Color.white;
+        #endregion
+
+        GUILayout.Label(selectedSymbol.character.ToString(), symbolPreviewStyle, GUILayout.Height(96f));
+        GUILayout.EndVertical();
+
+        #region Copy
+        GUIContent copyContent = new GUIContent("Copy", copyTooltip);
+        GUI.backgroundColor = AddColor("#0062ff") * 1.75f;
+        bool onCopyClick = GUILayout.Button(copyContent, copyButtonStyle);
+        GUI.backgroundColor = Color.white;
+        if (onCopyClick)
+        {
+            CopySymbolToClipboard(selectedSymbol.character);
+        }
+        #endregion
 
         DrawLine(GetColorFromHexString("#555555"), 1, 4f);
 
-        GUILayout.Button(copyContent, copyButtonStyle);
+        #region Information
+        infoFoldout = EditorGUILayout.Foldout(infoFoldout, "Info", true);
+        if (infoFoldout)
+        {
+            EditorGUILayout.HelpBox($"Symbol: {selectedSymbol.character}\n" +
+                                    $"Name: \n" +
+                                    $"Unicode Number: {CharToUnicode(selectedSymbol.character)}\n" +
+                                    $"Decimal: {CharToDecimal(selectedSymbol.character)}\n" +
+                                    $"Hexadecimal: {UnicodeToHexCode(selectedSymbol.character)}\n" +
+                                    $"Octal: {CharToOctal(selectedSymbol.character)}\n" +
+                                    $"HTML Code: \n" +
+                                    $"CSS Code: ", MessageType.Info);
+        }
+        #endregion
+        #endregion
+
+
 
         DrawLine(GetColorFromHexString("#555555"), 1, 4f);
 
@@ -89,9 +125,9 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             GUILayout.BeginHorizontal();
             for (int x = 0; x < columnCount; x++)
             {
-                int index = x + (rowCount * y);
-                char character = unicodeSymbols[index].character;
-                DrawSymbolButton(character);
+                int index = x + (columnCount * y);
+                UnicodeSymbol us = unicodeSymbols[index];
+                DrawSymbolButton(us);
             }
             GUILayout.EndHorizontal();
         }
@@ -121,20 +157,77 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
             unicodeSymbols.Add(us);
         }
+
+        selectedSymbol = unicodeSymbols[selectedIndex];
         //Debug.Log($"Unicode Count: {unicodeSymbols.Count}");
 
         unicodeSymbolsInitialized = true;
     }
 
+    #region Conversion(s)
+    /// <summary>
+    /// Convert a character from char to octal number.
+    /// </summary>
+    /// <param name="ch">Character.</param>
+    /// <returns>Formatted octal number.</returns>
+    public static string CharToOctal(char ch)
+    {
+        int decimalValue = (int)ch;
+        return Convert.ToString(decimalValue, 8);
+    }
+
+    /// <summary>
+    /// Convert a character from char to decimal number.
+    /// </summary>
+    /// <param name="ch">Character.</param>
+    /// <returns>Formatted decimal number.</returns>
+    public static string CharToDecimal(char ch)
+    {
+        int decimalValue = (int)ch;
+        return decimalValue.ToString();
+    }
+
+    /// <summary>
+    /// Convert a character from Unicode number to hex code (Hexadecimal).
+    /// </summary>
+    /// <param name="ch">Character.</param>
+    /// <returns>The hexadecimal string.</returns>
+    public static string UnicodeToHexCode(char ch)
+    {
+        return string.Format("{0:X4}", (int)ch);
+    }
+
+    /// <summary>
+    /// Convert a character from char to Unicode number.
+    /// </summary>
+    /// <param name="ch">Character.</param>
+    /// <returns>Formatted Unicode number.</returns>
+    public static string CharToUnicode(char ch)
+    {
+        return "U+" + UnicodeToHexCode(ch);
+    }
+    #endregion
+
+    /// <summary>
+    /// Copies the Unicode character symbol to the Clipboard.
+    /// </summary>
+    public static void CopySymbolToClipboard(char ch)
+    {
+        GUIUtility.systemCopyBuffer = ch.ToString();
+        Debug.Log($"Copied: {ch}");
+    }
+
+    #region Draw Method(s)
     /// <summary>
     /// Draw the specified Unicode character symbol on a button.
     /// </summary>
     /// <param name="symbolCharacter">Unicode character symbol.</param>
-    private void DrawSymbolButton(char symbolCharacter)
+    private void DrawSymbolButton(UnicodeSymbol us)
     {
-        if (GUILayout.Toggle(false, symbolCharacter.ToString(), symbolButtonStyle))
+        if (GUILayout.Toggle(false, us.character.ToString(), symbolButtonStyle))
         {
-            currentSymbolPreview = symbolCharacter;
+            selectedIndex = unicodeSymbols.IndexOf(us);
+            selectedSymbol = us;
         }
     }
 
@@ -160,6 +253,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
         GUILayout.Space(spacing);
     }
+    #endregion
 
     #region Miscellaneous
     /// <summary>
