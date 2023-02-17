@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +19,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     private List<UnicodeSymbol> unicodeSymbols;
     private bool unicodeSymbolsInitialized = false;
     private readonly int rowCount = 5;
-    private readonly int columnCount = 20;
+    private readonly int columnCount = 100;
     private UnicodeSymbol selectedSymbol = null;
     private int selectedIndex = 0;
 
@@ -54,6 +54,16 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             fixedHeight = 36
         };
 
+        GUIStyle sideButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 16,
+            stretchWidth = false,
+            fixedWidth = 36,
+            fixedHeight = 36,
+            alignment = TextAnchor.MiddleCenter
+        };
+
         GUIStyle previewHeaderStyle = new GUIStyle(GUI.skin.box)
         {
             fontStyle = FontStyle.Normal,
@@ -85,6 +95,18 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         GUILayout.Label(selectedSymbol.character.ToString(), symbolPreviewStyle, GUILayout.Height(96f));
         GUILayout.EndVertical();
 
+        GUILayout.BeginHorizontal();
+        #region Previous Symbol
+        GUIContent prevSymbolContent = new GUIContent("◀", "");
+        GUI.backgroundColor = AddColor("#0062ff") * 1.75f;
+        bool onPrevSymbolClick = GUILayout.Button(prevSymbolContent, sideButtonStyle);
+        GUI.backgroundColor = Color.white;
+        if (onPrevSymbolClick)
+        {
+            PreviousSymbol();
+        }
+        #endregion
+
         #region Copy
         GUIContent copyContent = new GUIContent("Copy", copyTooltip);
         GUI.backgroundColor = AddColor("#0062ff") * 1.75f;
@@ -95,6 +117,18 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             CopySymbolToClipboard(selectedSymbol.character);
         }
         #endregion
+
+        #region Next Symbol
+        GUIContent nextSymbolContent = new GUIContent("▶", "");
+        GUI.backgroundColor = AddColor("#0062ff") * 1.75f;
+        bool onNextSymbolClick = GUILayout.Button(nextSymbolContent, sideButtonStyle);
+        GUI.backgroundColor = Color.white;
+        if (onNextSymbolClick)
+        {
+            NextSymbol();
+        }
+        #endregion
+        GUILayout.EndHorizontal();
 
         DrawLine(GetColorFromHexString("#555555"), 1, 4f);
 
@@ -143,7 +177,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         //if (unicodeSymbolsInitialized)
         //    return;
 
-        char startChar = '�';
+        char startChar = '¡';
         int numOfUnicodeSymbols = rowCount * columnCount;
 
         // Initialize list.
@@ -162,6 +196,24 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         //Debug.Log($"Unicode Count: {unicodeSymbols.Count}");
 
         unicodeSymbolsInitialized = true;
+    }
+
+    /// <summary>
+    /// Get the next Unicode symbol.
+    /// </summary>
+    private void NextSymbol()
+    {
+        selectedIndex = Mathf.Clamp(selectedIndex + 1, 0, unicodeSymbols.Count - 1);
+        selectedSymbol = unicodeSymbols[selectedIndex];
+    }
+
+    /// <summary>
+    /// Get the previous Unicode symbol.
+    /// </summary>
+    private void PreviousSymbol()
+    {
+        selectedIndex = Mathf.Clamp(selectedIndex - 1, 0, unicodeSymbols.Count - 1);
+        selectedSymbol = unicodeSymbols[selectedIndex];
     }
 
     #region Conversion(s)
