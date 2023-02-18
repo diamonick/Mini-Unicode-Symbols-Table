@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using MiniUnicodeSymbolsTable.Editor;
 
 public class MiniUnicodeSymbolsTableEditor : EditorWindow
 {
@@ -128,7 +129,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     private UnicodeCategory unicodeCategory = UnicodeCategory.ASCII;
 
     private List<UnicodeSymbol> unicodeSymbols;
-    [SerializeField] private List<UnicodeSymbol> favoriteUnicodeSymbols;
+    private List<UnicodeSymbol> favoriteUnicodeSymbols;
     private bool unicodeSymbolsInitialized = false;
     private readonly int rowCount = 10;
     private readonly int columnCount = 100;
@@ -146,16 +147,38 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         window = GetWindow<MiniUnicodeSymbolsTableEditor>("Mini Unicode Symbols Table (MUST) V1.0");
     }
 
+    private void OnEnable()
+    {
+        if (favoriteUnicodeSymbols == null)
+        {
+            favoriteUnicodeSymbols = new List<UnicodeSymbol>();
+            //if (!MUSTEditorPrefs.HasKey($"Favorite Symbol[{favoriteUnicodeSymbols.Count}]"))
+            //{
+
+            //}
+
+            for (int i = 0; i < 50; i++)
+            {
+                if (!MUSTEditorPrefs.HasKey(GetFavoriteSymbolKey(i)))
+                    break;
+
+                char ch = GetFavoriteSymbolKey(i)[0];
+                UnicodeSymbol us = new UnicodeSymbol(ch);
+                if (us == null)
+                    continue;
+
+                favoriteUnicodeSymbols.Add(us);
+                Debug.Log(MUSTEditorPrefs.GetString(GetFavoriteSymbolKey(i)));
+            }
+        }
+    }
+
     /// <summary>
     /// Editor GUI.
     /// </summary>
     private void OnGUI()
     {
         window = GetWindow<MiniUnicodeSymbolsTableEditor>("Mini Unicode Symbols Table (MUST) V1.0");
-        if (favoriteUnicodeSymbols == null)
-        {
-            favoriteUnicodeSymbols = new List<UnicodeSymbol>();
-        }
 
         // Initialize GUI style for a character symbol button.
         symbolButtonStyle = new GUIStyle(GUI.skin.button)
@@ -520,13 +543,14 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             return;
 
         char character = favoriteSymbolPending.character;
-        //var data = EditorPrefs.GetString($"Favorite Symbol[{favoriteUnicodeSymbols.Count}]", JsonUtility.ToJson("", false));
+        MUSTEditorPrefs.SetString(GetFavoriteSymbolKey(favoriteUnicodeSymbols.Count), favoriteSymbolPending.character.ToString());
         favoriteUnicodeSymbols.Add(favoriteSymbolPending);
 
-        //JsonUtility.FromJsonOverwrite(data, );
         // Display quick notification.
         window.ShowNotification(new GUIContent($"{character}\n\nAdded to\n★ Favorites!"));
     }
+
+    public string GetFavoriteSymbolKey(int value) => $"Favorite Symbol[{value}]";
 
     #region Conversion(s)
     /// <summary>
@@ -722,8 +746,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         // Save user's favorite symbols to EditorPrefs.
         for (int i = 0; i < favoriteUnicodeSymbols.Count; i++)
         {
-            //var data = JsonUtility.ToJson("", false);
-            //EditorPrefs.SetString($"Favorite Symbol[{favoriteUnicodeSymbols.Count}]", data);
+            Debug.Log(MUSTEditorPrefs.GetString(GetFavoriteSymbolKey(i)));
         }
     }
 }
