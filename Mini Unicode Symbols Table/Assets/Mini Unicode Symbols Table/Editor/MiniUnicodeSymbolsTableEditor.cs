@@ -192,13 +192,14 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             alignment = TextAnchor.MiddleCenter
         };
 
-        GUIStyle previewHeaderStyle = new GUIStyle(GUI.skin.box)
+        GUIStyle previewHeaderStyle = new GUIStyle(GUI.skin.label)
         {
             fontStyle = FontStyle.Normal,
             fontSize = 12,
             fixedHeight = 18,
             stretchWidth = true,
-            stretchHeight = false
+            stretchHeight = false,
+            alignment = TextAnchor.MiddleCenter
         };
 
         GUIStyle symbolPreviewStyle = new GUIStyle(GUI.skin.box)
@@ -217,8 +218,10 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         GUI.backgroundColor = AddColor("#0062ff") * 3f;
         GUILayout.BeginVertical(GUI.skin.box);
         GUI.backgroundColor = Color.white;
+        symbolPreviewStyle.normal.textColor = Color.white;
         GUILayout.Label(selectedSymbol.character.ToString(), symbolPreviewStyle, GUILayout.Height(96f));
         GUI.backgroundColor = AddColor("#0062ff") * 3f;
+        previewHeaderStyle.normal.textColor = Color.white;
         GUILayout.Label(CharToUnicode(selectedSymbol.character), previewHeaderStyle);
         GUI.backgroundColor = Color.white;
         GUILayout.EndVertical();
@@ -719,7 +722,6 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         // Save user's favorite symbols to EditorPrefs.
         for (int i = 0; i < favoriteUnicodeSymbols.Count; i++)
         {
-            Debug.Log("FAV");
             //var data = JsonUtility.ToJson("", false);
             //EditorPrefs.SetString($"Favorite Symbol[{favoriteUnicodeSymbols.Count}]", data);
         }
