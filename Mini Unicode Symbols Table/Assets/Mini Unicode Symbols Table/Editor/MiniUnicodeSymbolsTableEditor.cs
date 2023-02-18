@@ -129,10 +129,11 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     private UnicodeCategory unicodeCategory = UnicodeCategory.ASCII;
 
     private List<UnicodeSymbol> unicodeSymbols;
-    private List<UnicodeSymbol> favoriteUnicodeSymbols;
+    private List<char> favoriteUnicodeSymbols;
     private bool unicodeSymbolsInitialized = false;
     private readonly int rowCount = 10;
     private readonly int columnCount = 100;
+    private readonly int maxNumOfFavoriteSymbols = 50;
     private UnicodeSymbol selectedSymbol = null;
     private UnicodeSymbol favoriteSymbolPending = null;
     private int selectedIndex = 0;
@@ -151,24 +152,22 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     {
         if (favoriteUnicodeSymbols == null)
         {
-            favoriteUnicodeSymbols = new List<UnicodeSymbol>();
-            //if (!MUSTEditorPrefs.HasKey($"Favorite Symbol[{favoriteUnicodeSymbols.Count}]"))
-            //{
+            favoriteUnicodeSymbols = new List<char>();
 
-            //}
-
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < maxNumOfFavoriteSymbols; i++)
             {
+                //MUSTEditorPrefs.DeleteKey(GetFavoriteSymbolKey(i));
                 if (!MUSTEditorPrefs.HasKey(GetFavoriteSymbolKey(i)))
-                    break;
+                    continue;
 
-                char ch = GetFavoriteSymbolKey(i)[0];
+                char ch = (char)MUSTEditorPrefs.GetInt(GetFavoriteSymbolKey(i));
+                Debug.Log(ch);
                 UnicodeSymbol us = new UnicodeSymbol(ch);
                 if (us == null)
                     continue;
 
-                favoriteUnicodeSymbols.Add(us);
-                Debug.Log(MUSTEditorPrefs.GetString(GetFavoriteSymbolKey(i)));
+                //MUSTEditorPrefs.DeleteKey(GetFavoriteSymbolKey(i));
+                favoriteUnicodeSymbols.Add(us.character);
             }
         }
     }
@@ -527,7 +526,8 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {
             GenericMenu menu = new GenericMenu();
             favoriteSymbolPending = us;
-            AddMenuItem(menu, "★ Add to Favorites", AddToFavorites);
+            AddMenuItem(menu, "Add to Favorites", AddToFavorites);
+            AddMenuItem(menu, "Remove from Favorites", RemoveFromFavorites);
             menu.ShowAsContext();
 
             current.Use();
@@ -535,22 +535,59 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     }
 
     /// <summary>
-    /// Add
+    /// Add a Unicode symbol to the Favorites list. 
     /// </summary>
     public void AddToFavorites()
     {
-        if (favoriteUnicodeSymbols.Contains(favoriteSymbolPending))
+        char character = favoriteSymbolPending.character;
+        if (favoriteUnicodeSymbols.Contains(character) || favoriteUnicodeSymbols.Count == maxNumOfFavoriteSymbols)
             return;
 
-        char character = favoriteSymbolPending.character;
-        MUSTEditorPrefs.SetString(GetFavoriteSymbolKey(favoriteUnicodeSymbols.Count), favoriteSymbolPending.character.ToString());
-        favoriteUnicodeSymbols.Add(favoriteSymbolPending);
+        MUSTEditorPrefs.SetInt(GetFavoriteSymbolKey(favoriteUnicodeSymbols.Count), (int)character);
+        favoriteUnicodeSymbols.Add(character);
 
         // Display quick notification.
         window.ShowNotification(new GUIContent($"{character}\n\nAdded to\n★ Favorites!"));
     }
 
+    /// <summary>
+    /// Remove a Unicode symbol from the Favorites list. 
+    /// </summary>
+    public void RemoveFromFavorites()
+    {
+        char character = favoriteSymbolPending.character;
+        if (!favoriteUnicodeSymbols.Contains(character) || favoriteUnicodeSymbols.Count == 0)
+            return;
+
+        MUSTEditorPrefs.DeleteKey(GetFavoriteSymbolKey(favoriteUnicodeSymbols.IndexOf(character)));
+        favoriteUnicodeSymbols.Remove(character);
+
+        ReassignFavoriteSymbolKeys();
+
+        // Display quick notification.
+        window.ShowNotification(new GUIContent($"{character}\n\nRemoved from\n★ Favorites!"));
+    }
+
     public string GetFavoriteSymbolKey(int value) => $"Favorite Symbol[{value}]";
+
+    private void ReassignFavoriteSymbolKeys()
+    {
+        // Delete all key references of the user's favorite Unicode symbols from EditorPrefs.
+        for (int i = 0; i < maxNumOfFavoriteSymbols; i++)
+        {
+            string key = GetFavoriteSymbolKey(i);
+            if (!MUSTEditorPrefs.HasKey(key))
+                continue;
+            MUSTEditorPrefs.DeleteKey(key);
+        }
+
+        // Reassign and organize the user's favorite Unicode symbols from EditorPrefs.
+        for (int i = 0; i < favoriteUnicodeSymbols.Count; i++)
+        {
+            char us = favoriteUnicodeSymbols[i];
+            MUSTEditorPrefs.SetInt(GetFavoriteSymbolKey(i), (int)us);
+        }
+    }
 
     #region Conversion(s)
     /// <summary>
@@ -746,7 +783,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         // Save user's favorite symbols to EditorPrefs.
         for (int i = 0; i < favoriteUnicodeSymbols.Count; i++)
         {
-            Debug.Log(MUSTEditorPrefs.GetString(GetFavoriteSymbolKey(i)));
+            Debug.Log(favoriteUnicodeSymbols[i]);
         }
     }
 }
