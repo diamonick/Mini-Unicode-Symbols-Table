@@ -11,7 +11,16 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     {
         All = 0,
         ASCII = 1,
-        Currency = 2
+        Currency = 2,
+        GreekLetters = 3,
+        RomanNumerals = 4,
+        Punctuation = 5,
+        Math = 6,
+        GeometricShapes = 7,
+        Arrows = 8,
+        Zodiac = 9,
+        Planets = 10,
+        Favorites = 11
     }
     #endregion
 
@@ -117,18 +126,14 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     private bool settingsFoldout = false;
 
     private UnicodeCategory unicodeCategory = UnicodeCategory.ASCII;
-    private readonly string[] categoryNames = new string[]
-    {
-        "All",
-        "ASCII",
-        "Currency"
-    };
 
     private List<UnicodeSymbol> unicodeSymbols;
+    [SerializeField] private List<UnicodeSymbol> favoriteUnicodeSymbols;
     private bool unicodeSymbolsInitialized = false;
     private readonly int rowCount = 10;
     private readonly int columnCount = 100;
     private UnicodeSymbol selectedSymbol = null;
+    private UnicodeSymbol favoriteSymbolPending = null;
     private int selectedIndex = 0;
 
     /// <summary>
@@ -146,6 +151,11 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// </summary>
     private void OnGUI()
     {
+        window = GetWindow<MiniUnicodeSymbolsTableEditor>("Mini Unicode Symbols Table (MUST) V1.0");
+        if (favoriteUnicodeSymbols == null)
+        {
+            favoriteUnicodeSymbols = new List<UnicodeSymbol>();
+        }
 
         // Initialize GUI style for a character symbol button.
         symbolButtonStyle = new GUIStyle(GUI.skin.button)
@@ -209,7 +219,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         GUI.backgroundColor = Color.white;
         GUILayout.Label(selectedSymbol.character.ToString(), symbolPreviewStyle, GUILayout.Height(96f));
         GUI.backgroundColor = AddColor("#0062ff") * 3f;
-        GUILayout.Box(CharToUnicode(selectedSymbol.character), previewHeaderStyle);
+        GUILayout.Label(CharToUnicode(selectedSymbol.character), previewHeaderStyle);
         GUI.backgroundColor = Color.white;
         GUILayout.EndVertical();
 
@@ -235,6 +245,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         GUI.backgroundColor = Color.white;
         if (onCopyClick)
         {
+            ShowCopyContextMenu(selectedSymbol);
             CopyToClipboard(selectedSymbol.character.ToString());
         }
         #endregion
@@ -360,6 +371,23 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             stretchHeight = false,
             alignment = TextAnchor.MiddleCenter
         };
+
+        string[] categoryNames = new string[]
+        {
+            "All ()",
+            "ASCII (128)",
+            "Currency ()",
+            "Greek Letters ()",
+            "Roman Numerals ()",
+            "Punctuation ()",
+            "Math ()",
+            "Geometric Shapes ()",
+            "Arrows ()",
+            "Zodiac ()",
+            "Planets ()",
+            "Miscellaneous ()",
+            $"★ Favorites ({favoriteUnicodeSymbols.Count})"
+        };
         unicodeCategory = (UnicodeCategory)EditorGUILayout.Popup((int)unicodeCategory, categoryNames);
         GUI.backgroundColor = Color.white;
 
@@ -436,7 +464,65 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     public static void CopyToClipboard(string s)
     {
         GUIUtility.systemCopyBuffer = s;
-        Debug.Log($"Copied: {s}");
+
+        // Display quick notification.
+        window.ShowNotification(new GUIContent($"{s}\n\nCopied!"));
+    }
+
+    public void CopySymbol() => CopyToClipboard(selectedSymbol.character.ToString());
+    public void CopyUnicode() => CopyToClipboard(CharToUnicode(selectedSymbol.character));
+    public void CopyHexCode() => CopyToClipboard(CharToHTML(selectedSymbol.character));
+    public void CopyCSSCode() => CopyToClipboard(CharToCSS(selectedSymbol.character));
+
+    public void ShowCopyContextMenu(UnicodeSymbol us)
+    {
+        // Get current event.
+        Event current = Event.current;
+
+        if (current.button == 1)
+        {
+            GenericMenu menu = new GenericMenu();
+            AddMenuItem(menu, "Copy Symbol", CopySymbol);
+            AddMenuItem(menu, "Copy Unicode", CopyUnicode);
+            AddMenuItem(menu, "Copy HTML Code", CopyHexCode);
+            AddMenuItem(menu, "Copy CSS Code", CopyCSSCode);
+            menu.ShowAsContext();
+
+            current.Use();
+        }
+    }
+
+    public void ShowSymbolContextMenu(UnicodeSymbol us)
+    {
+        // Get current event.
+        Event current = Event.current;
+
+        if (current.button == 1)
+        {
+            GenericMenu menu = new GenericMenu();
+            favoriteSymbolPending = us;
+            AddMenuItem(menu, "★ Add to Favorites", AddToFavorites);
+            menu.ShowAsContext();
+
+            current.Use();
+        }
+    }
+
+    /// <summary>
+    /// Add
+    /// </summary>
+    public void AddToFavorites()
+    {
+        if (favoriteUnicodeSymbols.Contains(favoriteSymbolPending))
+            return;
+
+        char character = favoriteSymbolPending.character;
+        //var data = EditorPrefs.GetString($"Favorite Symbol[{favoriteUnicodeSymbols.Count}]", JsonUtility.ToJson("", false));
+        favoriteUnicodeSymbols.Add(favoriteSymbolPending);
+
+        //JsonUtility.FromJsonOverwrite(data, );
+        // Display quick notification.
+        window.ShowNotification(new GUIContent($"{character}\n\nAdded to\n★ Favorites!"));
     }
 
     #region Conversion(s)
@@ -514,6 +600,8 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {
             selectedIndex = unicodeSymbols.IndexOf(us);
             selectedSymbol = us;
+
+            ShowSymbolContextMenu(us);
         }
     }
 
@@ -539,6 +627,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
         GUILayout.Space(spacing);
     }
+
     /// <summary>
     /// Draw bullet point: "•"
     /// </summary>
@@ -559,6 +648,19 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         GUI.contentColor = AddColor(bulletPointColor);
         GUILayout.Label("•", bulletPointStyle);
         GUI.contentColor = Color.white;
+    }
+    #endregion
+
+    #region Custom Context Menus
+    /// <summary>
+    /// Add new menu item to a context menu.
+    /// </summary>
+    /// <param name="menu"></param>
+    /// <param name="menuPath"></param>
+    /// <param name="color"></param>
+    private void AddMenuItem(GenericMenu menu, string menuPath, GenericMenu.MenuFunction method)
+    {
+        menu.AddItem(new GUIContent(menuPath), false, method);
     }
     #endregion
 
@@ -611,4 +713,15 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         return color;
     }
     #endregion
+
+    private void OnDisable()
+    {
+        // Save user's favorite symbols to EditorPrefs.
+        for (int i = 0; i < favoriteUnicodeSymbols.Count; i++)
+        {
+            Debug.Log("FAV");
+            //var data = JsonUtility.ToJson("", false);
+            //EditorPrefs.SetString($"Favorite Symbol[{favoriteUnicodeSymbols.Count}]", data);
+        }
+    }
 }
