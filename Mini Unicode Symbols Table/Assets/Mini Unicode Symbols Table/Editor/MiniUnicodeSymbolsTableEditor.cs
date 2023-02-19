@@ -21,97 +21,114 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         Arrows = 8,
         Zodiac = 9,
         Planets = 10,
-        Favorites = 11
+        Miscellaneous = 11,
+        Favorites = 12
     }
     #endregion
 
-    private Dictionary<char, string> unicodeNames = new Dictionary<char, string>()
+    private readonly Dictionary<char, string> ASCIIPrintableNames = new Dictionary<char, string>()
     {
+        #region ASCII-Printable
         {(char)32, "Space"},
         {(char)33, "Exclamation point"},
-        {(char)34, ""},
-        {(char)35, ""},
-        {(char)36, ""},
-        {(char)37, ""},
-        {(char)38, ""},
-        {(char)39, ""},
-        {(char)40, ""},
-        {(char)41, ""},
-        {(char)42, ""},
-        {(char)43, ""},
-        {(char)44, ""},
-        {(char)45, ""},
-        {(char)46, ""},
-        {(char)47, ""},
-        {(char)48, ""},
-        {(char)49, ""},
-        {(char)50, ""},
-        {(char)51, ""},
-        {(char)52, ""},
-        {(char)53, ""},
-        {(char)54, ""},
-        {(char)55, ""},
-        {(char)56, ""},
-        {(char)57, ""},
-        {(char)58, ""},
-        {(char)59, ""},
-        {(char)60, ""},
-        {(char)61, ""},
-        {(char)62, ""},
-        {(char)63, ""},
-        {(char)64, ""},
-        {(char)65, ""},
-        {(char)66, ""},
-        {(char)67, ""},
-        {(char)68, ""},
-        {(char)69, ""},
-        {(char)70, ""},
-        {(char)71, ""},
-        {(char)72, ""},
-        {(char)73, ""},
-        {(char)74, ""},
-        {(char)75, ""},
-        {(char)76, ""},
-        {(char)77, ""},
-        {(char)78, ""},
-        {(char)79, ""},
-        {(char)80, ""},
-        {(char)81, ""},
-        {(char)82, ""},
-        {(char)83, ""},
-        {(char)84, ""},
-        {(char)85, ""},
-        {(char)86, ""},
-        {(char)87, ""},
-        {(char)88, ""},
-        {(char)89, ""},
-        {(char)90, ""},
-        {(char)91, ""},
-        {(char)92, ""},
-        {(char)93, ""},
-        {(char)94, ""},
-        {(char)95, ""},
-        {(char)96, ""},
-        {(char)97, ""},
-        {(char)98, ""},
-        {(char)99, ""},
-        {(char)100, ""},
-        {(char)101, ""},
-        {(char)102, ""},
-        {(char)103, ""},
-        {(char)104, ""},
-        {(char)105, ""},
-        {(char)106, ""},
-        {(char)107, ""},
-        {(char)108, ""},
-        {(char)109, ""},
-        {(char)110, ""},
-        {(char)111, ""},
+        {(char)34, "Quotation mark"},
+        {(char)35, "Number sign"},
+        {(char)36, "Dollar sign"},
+        {(char)37, "Percent sign"},
+        {(char)38, "Ampersand"},
+        {(char)39, "Apostrophe"},
+        {(char)40, "Left parenthesis"},
+        {(char)41, "Right parenthesis"},
+        {(char)42, "Asterisk"},
+        {(char)43, "Plus sign"},
+        {(char)44, "Comma"},
+        {(char)45, "Hyphen-minus"},
+        {(char)46, "Full stop"},
+        {(char)47, "Slash (Solidus)"},
+        {(char)48, "Digit Zero"},
+        {(char)49, "Digit One"},
+        {(char)50, "Digit Two"},
+        {(char)51, "Digit Three"},
+        {(char)52, "Digit Four"},
+        {(char)53, "Digit Five"},
+        {(char)54, "Digit Six"},
+        {(char)55, "Digit Seven"},
+        {(char)56, "Digit Eight"},
+        {(char)57, "Digit Nine"},
+        {(char)58, "Colon"},
+        {(char)59, "Semicolon"},
+        {(char)60, "Less-than sign"},
+        {(char)61, "Equal sign"},
+        {(char)62, "Greater-than sign"},
+        {(char)63, "Question mark"},
+        {(char)64, "At sign"},
+        {(char)65, "Latin Capital letter A"},
+        {(char)66, "Latin Capital letter B"},
+        {(char)67, "Latin Capital letter C"},
+        {(char)68, "Latin Capital letter D"},
+        {(char)69, "Latin Capital letter E"},
+        {(char)70, "Latin Capital letter F"},
+        {(char)71, "Latin Capital letter G"},
+        {(char)72, "Latin Capital letter H"},
+        {(char)73, "Latin Capital letter I"},
+        {(char)74, "Latin Capital letter J"},
+        {(char)75, "Latin Capital letter K"},
+        {(char)76, "Latin Capital letter L"},
+        {(char)77, "Latin Capital letter M"},
+        {(char)78, "Latin Capital letter N"},
+        {(char)79, "Latin Capital letter O"},
+        {(char)80, "Latin Capital letter P"},
+        {(char)81, "Latin Capital letter Q"},
+        {(char)82, "Latin Capital letter R"},
+        {(char)83, "Latin Capital letter S"},
+        {(char)84, "Latin Capital letter T"},
+        {(char)85, "Latin Capital letter U"},
+        {(char)86, "Latin Capital letter V"},
+        {(char)87, "Latin Capital letter W"},
+        {(char)88, "Latin Capital letter X"},
+        {(char)89, "Latin Capital letter Y"},
+        {(char)90, "Latin Capital letter Z"},
+        {(char)91, "Left Square Bracket"},
+        {(char)92, "Backslash"},
+        {(char)93, "Right Square Bracket"},
+        {(char)94, "Circumflex accent"},
+        {(char)95, "Low line"},
+        {(char)96, "Grave accent"},
+        {(char)97, "Latin Small letter A"},
+        {(char)98, "Latin Small letter B"},
+        {(char)99, "Latin Small letter C"},
+        {(char)100, "Latin Small letter D"},
+        {(char)101, "Latin Small letter E"},
+        {(char)102, "Latin Small letter F"},
+        {(char)103, "Latin Small letter G"},
+        {(char)104, "Latin Small letter H"},
+        {(char)105, "Latin Small letter I"},
+        {(char)106, "Latin Small letter J"},
+        {(char)107, "Latin Small letter K"},
+        {(char)108, "Latin Small letter L"},
+        {(char)109, "Latin Small letter M"},
+        {(char)110, "Latin Small letter N"},
+        {(char)111, "Latin Small letter O"},
+        {(char)112, "Latin Small letter P"},
+        {(char)113, "Latin Small letter Q"},
+        {(char)114, "Latin Small letter R"},
+        {(char)115, "Latin Small letter S"},
+        {(char)116, "Latin Small letter T"},
+        {(char)117, "Latin Small letter U"},
+        {(char)118, "Latin Small letter V"},
+        {(char)119, "Latin Small letter W"},
+        {(char)120, "Latin Small letter X"},
+        {(char)121, "Latin Small letter Y"},
+        {(char)122, "Latin Small letter Z"},
+        {(char)123, "Left Curly Bracket"},
+        {(char)124, "Vertical bar"},
+        {(char)125, "Right Curly Bracket"},
+        {(char)126, "Tilde"},
+        #endregion
     };
 
     private static MiniUnicodeSymbolsTableEditor window;    // Editor window
     private Vector2 scrollPosition;                         // Current scroll position
-    private Vector2 categoryScrollPos;                      // Current scroll position
 
     // Icon paths
     // Note: Make sure to import the package(s) under Assets to have all icons display properly in the edito window.
@@ -119,6 +136,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
     private string copyTooltip = "Click to copy.";
     private string copySymbolTooltip = "Click this to copy the previewed Unicode symbol and paste it anywhere.";
+    private string favoriteButtonTooltip = "Click this to add/remove this Unicode symbol to and from ★ Favorites.";
 
     private GUIStyle symbolButtonStyle;
     private GUIStyle copyButtonStyle;
@@ -128,14 +146,14 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
     private UnicodeCategory unicodeCategory = UnicodeCategory.ASCII;
 
-    private List<UnicodeSymbol> unicodeSymbols;
+    private List<char> unicodeSymbols;
     private List<char> favoriteUnicodeSymbols;
     private bool unicodeSymbolsInitialized = false;
     private readonly int rowCount = 10;
     private readonly int columnCount = 100;
     private readonly int maxNumOfFavoriteSymbols = 50;
-    private UnicodeSymbol selectedSymbol = null;
-    private UnicodeSymbol favoriteSymbolPending = null;
+    private char selectedSymbol = ' ';
+    private char favoriteSymbolPending = ' ';
     private int selectedIndex = 0;
 
     /// <summary>
@@ -156,18 +174,15 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
             for (int i = 0; i < maxNumOfFavoriteSymbols; i++)
             {
-                //MUSTEditorPrefs.DeleteKey(GetFavoriteSymbolKey(i));
                 if (!MUSTEditorPrefs.HasKey(GetFavoriteSymbolKey(i)))
                     continue;
 
                 char ch = (char)MUSTEditorPrefs.GetInt(GetFavoriteSymbolKey(i));
                 Debug.Log(ch);
-                UnicodeSymbol us = new UnicodeSymbol(ch);
-                if (us == null)
+                if (ch == null)
                     continue;
 
-                //MUSTEditorPrefs.DeleteKey(GetFavoriteSymbolKey(i));
-                favoriteUnicodeSymbols.Add(us.character);
+                favoriteUnicodeSymbols.Add(ch);
             }
         }
     }
@@ -177,13 +192,37 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// </summary>
     private void OnGUI()
     {
-        window = GetWindow<MiniUnicodeSymbolsTableEditor>("Mini Unicode Symbols Table (MUST) V1.0");
+        // Get window.
+        if (window == null)
+        {
+            window = GetWindow<MiniUnicodeSymbolsTableEditor>("Mini Unicode Symbols Table (MUST) V1.0");
+        }
+
+        // Set minimum & maximum size of the editor window.
+        window.minSize = new Vector2(312f, 464f);
 
         // Initialize GUI style for a character symbol button.
         symbolButtonStyle = new GUIStyle(GUI.skin.button)
         {
             fixedWidth = 28,
             fixedHeight = 28,
+        };
+
+        GUIStyle favoriteButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 20,
+            fixedWidth = 28,
+            fixedHeight = 28,
+        };
+
+        GUIStyle tabButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 12,
+            fixedHeight = 20,
+            stretchWidth = true,
+            stretchHeight = false
         };
 
         copyButtonStyle = new GUIStyle(GUI.skin.button)
@@ -235,16 +274,27 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
         InitializeUnicodeSymbols();
 
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Toggle(false, "Table", tabButtonStyle))
+        {
+
+        }
+        if (GUILayout.Toggle(false, "Settings", tabButtonStyle))
+        {
+
+        }
+        GUILayout.EndHorizontal();
+
         GUILayout.BeginVertical();
         #region Preview Box
         GUI.backgroundColor = AddColor("#0062ff") * 3f;
         GUILayout.BeginVertical(GUI.skin.box);
         GUI.backgroundColor = Color.white;
         symbolPreviewStyle.normal.textColor = Color.white;
-        GUILayout.Label(selectedSymbol.character.ToString(), symbolPreviewStyle, GUILayout.Height(96f));
+        GUILayout.Label(selectedSymbol.ToString(), symbolPreviewStyle, GUILayout.Height(96f));
         GUI.backgroundColor = AddColor("#0062ff") * 3f;
         previewHeaderStyle.normal.textColor = Color.white;
-        GUILayout.Label(CharToUnicode(selectedSymbol.character), previewHeaderStyle);
+        GUILayout.Label(CharToUnicode(selectedSymbol), previewHeaderStyle);
         GUI.backgroundColor = Color.white;
         GUILayout.EndVertical();
 
@@ -271,7 +321,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         if (onCopyClick)
         {
             ShowCopyContextMenu(selectedSymbol);
-            CopyToClipboard(selectedSymbol.character.ToString());
+            CopyToClipboard(selectedSymbol.ToString());
         }
         #endregion
 
@@ -295,25 +345,28 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         if (infoFoldout)
         {
             GUILayout.BeginVertical(EditorStyles.helpBox);
-            //GUI.contentColor = isEnabled ? AddColor(Color.white) : Color.white;
+            #region Symbol
             GUILayout.BeginHorizontal();
             DrawBulletPoint("#0062ff");
             GUILayout.Label($"Symbol: ", GUILayout.ExpandWidth(false));
-            GUILayout.Label($"{selectedSymbol.character}", GUILayout.ExpandWidth(false));
+            GUILayout.Label($"{selectedSymbol}", GUILayout.ExpandWidth(false));
             GUILayout.EndHorizontal();
-
+            #endregion
+            #region Name
             GUILayout.BeginHorizontal();
             DrawBulletPoint("#0062ff");
             GUILayout.Label($"Name: ", GUILayout.ExpandWidth(false));
+            //GUILayout.Label($"Name: {ASCIIPrintableNames[selectedSymbol]}", GUILayout.ExpandWidth(false));
             GUILayout.Label($" ", GUILayout.ExpandWidth(false));
             GUILayout.EndHorizontal();
-
+            #endregion
+            #region Unicode Number
             GUILayout.BeginHorizontal();
             DrawBulletPoint("#0062ff");
             GUILayout.Label($"Unicode Number: ", GUILayout.ExpandWidth(false));
             GUI.backgroundColor = AddColor("#0062ff") * 2f;
             GUI.contentColor = AddColor(Color.white);
-            GUIContent unicodeNumContent = new GUIContent(CharToUnicode(selectedSymbol.character), copyTooltip);
+            GUIContent unicodeNumContent = new GUIContent(CharToUnicode(selectedSymbol), copyTooltip);
             if (GUILayout.Button(unicodeNumContent, GUILayout.ExpandWidth(false)))
             {
                 CopyToClipboard(unicodeNumContent.text);
@@ -321,28 +374,32 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             GUI.contentColor = Color.white;
             GUI.backgroundColor = Color.white;
             GUILayout.EndHorizontal();
-
+            #endregion
+            #region Decimal
             GUILayout.BeginHorizontal();
             DrawBulletPoint("#0062ff");
-            GUILayout.Label($"Decimal: {CharToDecimal(selectedSymbol.character)}");
+            GUILayout.Label($"Decimal: {CharToDecimal(selectedSymbol)}");
             GUILayout.EndHorizontal();
-
+            #endregion
+            #region Hexadecimal
             GUILayout.BeginHorizontal();
             DrawBulletPoint("#0062ff");
-            GUILayout.Label($"Hexadecimal: {UnicodeToHexCode(selectedSymbol.character)}");
+            GUILayout.Label($"Hexadecimal: {UnicodeToHexCode(selectedSymbol)}");
             GUILayout.EndHorizontal();
-
+            #endregion
+            #region Octal
             GUILayout.BeginHorizontal();
             DrawBulletPoint("#0062ff");
-            GUILayout.Label($"Octal: {CharToOctal(selectedSymbol.character)}");
+            GUILayout.Label($"Octal: {CharToOctal(selectedSymbol)}");
             GUILayout.EndHorizontal();
-
+            #endregion
+            #region HTML Code
             GUILayout.BeginHorizontal();
             DrawBulletPoint("#0062ff");
             GUILayout.Label($"HTML Code: ", GUILayout.ExpandWidth(false));
             GUI.backgroundColor = AddColor("#0062ff") * 2f;
             GUI.contentColor = AddColor(Color.white);
-            GUIContent htmlCodeContent = new GUIContent(CharToHTML(selectedSymbol.character), copyTooltip);
+            GUIContent htmlCodeContent = new GUIContent(CharToHTML(selectedSymbol), copyTooltip);
             if (GUILayout.Button(htmlCodeContent, GUILayout.ExpandWidth(false)))
             {
                 CopyToClipboard(htmlCodeContent.text);
@@ -350,13 +407,14 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             GUI.contentColor = Color.white;
             GUI.backgroundColor = Color.white;
             GUILayout.EndHorizontal();
-
+            #endregion
+            #region CSS Code
             GUILayout.BeginHorizontal();
             DrawBulletPoint("#0062ff");
             GUILayout.Label($"CSS Code: ", GUILayout.ExpandWidth(false));
             GUI.backgroundColor = AddColor("#0062ff") * 2f;
             GUI.contentColor = AddColor(Color.white);
-            GUIContent cssCodeContent = new GUIContent(CharToCSS(selectedSymbol.character), copyTooltip);
+            GUIContent cssCodeContent = new GUIContent(CharToCSS(selectedSymbol), copyTooltip);
             if (GUILayout.Button(cssCodeContent, GUILayout.ExpandWidth(false)))
             {
                 CopyToClipboard(cssCodeContent.text);
@@ -364,25 +422,16 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             GUI.contentColor = Color.white;
             GUI.backgroundColor = Color.white;
             GUILayout.EndHorizontal();
+            #endregion
 
             GUI.contentColor = Color.white;
             GUILayout.EndVertical();
         }
         #endregion
-
-        GUILayout.EndVertical();
-        #endregion
-        #region Settings
-        GUILayout.BeginVertical(EditorStyles.helpBox);
-        settingsFoldout = EditorGUILayout.Foldout(settingsFoldout, "ⓘ Settings", true);
-        if (settingsFoldout)
-        {
-
-        }
+        //
         GUILayout.EndVertical();
         #endregion
 
-        GUILayout.FlexibleSpace();
         DrawLine(GetColorFromHexString("#555555"), 1, 4f);
 
         GUI.backgroundColor = AddColor("#0062ff") * 2f;
@@ -397,10 +446,22 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             alignment = TextAnchor.MiddleCenter
         };
 
+        GUI.backgroundColor = HasFavoriteSymbol(selectedSymbol) ? AddColor("#000842") : AddColor("#0062ff") * 2f;
+        GUI.contentColor = HasFavoriteSymbol(selectedSymbol) ? Color.white : Color.white;
+        GUILayout.BeginArea(new Rect(position.width - 40f, 34f, 36f, 36f));
+        GUIContent favoriteButtonContent = new GUIContent(HasFavoriteSymbol(selectedSymbol) ? "★" : "☆", favoriteButtonTooltip);
+        if (GUILayout.Toggle(false, favoriteButtonContent, favoriteButtonStyle))
+        {
+            ToggleFavorite();
+        }
+        GUILayout.EndArea();
+        GUI.contentColor = Color.white;
+        GUI.backgroundColor = AddColor("#0062ff") * 2f;
+
         string[] categoryNames = new string[]
         {
             "All ()",
-            "ASCII (128)",
+            "ASCII-Printable (95)",
             "Currency ()",
             "Greek Letters ()",
             "Roman Numerals ()",
@@ -413,6 +474,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             "Miscellaneous ()",
             $"★ Favorites ({favoriteUnicodeSymbols.Count})"
         };
+        GUI.contentColor = AddColor(Color.white);
         unicodeCategory = (UnicodeCategory)EditorGUILayout.Popup((int)unicodeCategory, categoryNames);
         GUI.backgroundColor = Color.white;
 
@@ -420,17 +482,8 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
         // Update scroll position in the editor window.
         scrollPosition = GUILayout.BeginScrollView(scrollPosition, true, false, GUI.skin.horizontalScrollbar, GUIStyle.none);
-        for (int y = 0; y < rowCount; y++)
-        {
-            GUILayout.BeginHorizontal();
-            for (int x = 0; x < columnCount; x++)
-            {
-                int index = x + (columnCount * y);
-                UnicodeSymbol us = unicodeSymbols[index];
-                DrawSymbolButton(us);
-            }
-            GUILayout.EndHorizontal();
-        }
+        SetupUnicodeTable();
+        
         GUILayout.EndScrollView();
         GUILayout.EndVertical();
     }
@@ -448,11 +501,19 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         int numOfUnicodeSymbols = rowCount * columnCount;
 
         // Initialize list.
-        unicodeSymbols = new List<UnicodeSymbol>();
+        if (unicodeSymbols == null)
+        {
+            unicodeSymbols = new List<char>();
+        }
+        else if (unicodeSymbols.Count > 0)
+        {
+            selectedSymbol = unicodeSymbols[selectedIndex];
+            return;
+        }
 
         for (int i = 0; i < numOfUnicodeSymbols; i++)
         {
-            UnicodeSymbol us = new UnicodeSymbol(startChar++);
+            char us = startChar++;
             if (unicodeSymbols.Contains(us))
                 continue;
 
@@ -460,8 +521,6 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         }
 
         selectedSymbol = unicodeSymbols[selectedIndex];
-        //Debug.Log($"Unicode Count: {unicodeSymbols.Count}");
-
         unicodeSymbolsInitialized = true;
     }
 
@@ -483,6 +542,55 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         selectedSymbol = unicodeSymbols[selectedIndex];
     }
 
+    private void SetupUnicodeTable()
+    {
+        unicodeSymbols.Clear();
+        InitializeUnicodeSymbols();
+
+        switch (unicodeCategory)
+        {
+            case UnicodeCategory.ASCII:
+                List<char> asciiPrintableSymbols = new List<char>();
+                foreach (char ch in ASCIIPrintableNames.Keys)
+                {
+                    asciiPrintableSymbols.Add(ch);
+                }
+                DrawUnicodeTable(6, 16, asciiPrintableSymbols);
+                break;
+            case UnicodeCategory.Favorites:
+                DrawUnicodeTable(5, 10, favoriteUnicodeSymbols);
+                break;
+        }
+    }
+
+    private void DrawUnicodeTable(int rows, int columns, List<char> characters)
+    {
+        bool lastSymbolButton = false;
+
+        for (int y = 0; y < rows; y++)
+        {
+            GUILayout.BeginHorizontal();
+            for (int x = 0; x < columns; x++)
+            {
+                int index = x + (columns * y);
+                lastSymbolButton = index == characters.Count - 1;
+                char us = characters[index];
+                if (!unicodeSymbols.Contains(us))
+                {
+                    characters.Add(us);
+                }
+                DrawSymbolButton(us);
+
+                if (lastSymbolButton)
+                    break;
+            }
+            GUILayout.EndHorizontal();
+
+            if (lastSymbolButton)
+                break;
+        }
+    }
+
     /// <summary>
     /// Copies a string to the Clipboard.
     /// </summary>
@@ -494,12 +602,12 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         window.ShowNotification(new GUIContent($"{s}\n\nCopied!"));
     }
 
-    public void CopySymbol() => CopyToClipboard(selectedSymbol.character.ToString());
-    public void CopyUnicode() => CopyToClipboard(CharToUnicode(selectedSymbol.character));
-    public void CopyHexCode() => CopyToClipboard(CharToHTML(selectedSymbol.character));
-    public void CopyCSSCode() => CopyToClipboard(CharToCSS(selectedSymbol.character));
+    public void CopySymbol() => CopyToClipboard(selectedSymbol.ToString());
+    public void CopyUnicode() => CopyToClipboard(CharToUnicode(selectedSymbol));
+    public void CopyHexCode() => CopyToClipboard(CharToHTML(selectedSymbol));
+    public void CopyCSSCode() => CopyToClipboard(CharToCSS(selectedSymbol));
 
-    public void ShowCopyContextMenu(UnicodeSymbol us)
+    public void ShowCopyContextMenu(char us)
     {
         // Get current event.
         Event current = Event.current;
@@ -517,7 +625,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         }
     }
 
-    public void ShowSymbolContextMenu(UnicodeSymbol us)
+    public void ShowSymbolContextMenu(char us)
     {
         // Get current event.
         Event current = Event.current;
@@ -539,8 +647,16 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// </summary>
     public void AddToFavorites()
     {
-        char character = favoriteSymbolPending.character;
-        if (favoriteUnicodeSymbols.Contains(character) || favoriteUnicodeSymbols.Count == maxNumOfFavoriteSymbols)
+        AddToFavorites(favoriteSymbolPending);
+    }
+
+    /// <summary>
+    /// Add a Unicode symbol to the Favorites list. 
+    /// </summary>
+    public void AddToFavorites(char us)
+    {
+        char character = us;
+        if (HasFavoriteSymbol(us) || favoriteUnicodeSymbols.Count == maxNumOfFavoriteSymbols)
             return;
 
         MUSTEditorPrefs.SetInt(GetFavoriteSymbolKey(favoriteUnicodeSymbols.Count), (int)character);
@@ -555,8 +671,16 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// </summary>
     public void RemoveFromFavorites()
     {
-        char character = favoriteSymbolPending.character;
-        if (!favoriteUnicodeSymbols.Contains(character) || favoriteUnicodeSymbols.Count == 0)
+        RemoveFromFavorites(favoriteSymbolPending);
+    }
+
+    /// <summary>
+    /// Remove a Unicode symbol from the Favorites list. 
+    /// </summary>
+    public void RemoveFromFavorites(char us)
+    {
+        char character = us;
+        if (!HasFavoriteSymbol(favoriteSymbolPending) || favoriteUnicodeSymbols.Count == 0)
             return;
 
         MUSTEditorPrefs.DeleteKey(GetFavoriteSymbolKey(favoriteUnicodeSymbols.IndexOf(character)));
@@ -566,6 +690,18 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
         // Display quick notification.
         window.ShowNotification(new GUIContent($"{character}\n\nRemoved from\n★ Favorites!"));
+    }
+
+    public void ToggleFavorite()
+    {
+        if (HasFavoriteSymbol(selectedSymbol))
+        {
+            RemoveFromFavorites(selectedSymbol);
+        }
+        else
+        {
+            AddToFavorites(selectedSymbol);
+        }
     }
 
     public string GetFavoriteSymbolKey(int value) => $"Favorite Symbol[{value}]";
@@ -587,6 +723,11 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             char us = favoriteUnicodeSymbols[i];
             MUSTEditorPrefs.SetInt(GetFavoriteSymbolKey(i), (int)us);
         }
+    }
+
+    private bool HasFavoriteSymbol(char us)
+    {
+        return favoriteUnicodeSymbols.Contains(selectedSymbol);
     }
 
     #region Conversion(s)
@@ -658,12 +799,13 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// Draw the specified Unicode character symbol on a button.
     /// </summary>
     /// <param name="symbolCharacter">Unicode character symbol.</param>
-    private void DrawSymbolButton(UnicodeSymbol us)
+    private void DrawSymbolButton(char us)
     {
-        if (GUILayout.Toggle(false, us.character.ToString(), symbolButtonStyle))
+        if (GUILayout.Toggle(false, us.ToString(), symbolButtonStyle))
         {
             selectedIndex = unicodeSymbols.IndexOf(us);
             selectedSymbol = us;
+            Debug.Log($"Index: {selectedIndex}");
 
             ShowSymbolContextMenu(us);
         }
@@ -785,5 +927,6 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {
             Debug.Log(favoriteUnicodeSymbols[i]);
         }
+        //Debug.Log($"Symbol: {selectedSymbol}");
     }
 }
