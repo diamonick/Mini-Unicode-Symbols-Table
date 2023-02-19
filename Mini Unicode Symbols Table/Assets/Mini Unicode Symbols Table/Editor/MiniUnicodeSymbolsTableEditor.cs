@@ -21,8 +21,10 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         Arrows = 8,
         Zodiac = 9,
         Planets = 10,
-        Miscellaneous = 11,
-        Favorites = 12
+        PlayingCardSuits = 11,
+        Musical = 12,
+        Miscellaneous = 13,
+        Favorites = 14
     }
     #endregion
 
@@ -32,15 +34,15 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)32, "Space"},
         {(char)33, "Exclamation point"},
         {(char)34, "Quotation mark"},
-        {(char)35, "Number sign"},
-        {(char)36, "Dollar sign"},
-        {(char)37, "Percent sign"},
+        {(char)35, "Number Sign"},
+        {(char)36, "Dollar Sign"},
+        {(char)37, "Percent Sign"},
         {(char)38, "Ampersand"},
         {(char)39, "Apostrophe"},
         {(char)40, "Left parenthesis"},
         {(char)41, "Right parenthesis"},
         {(char)42, "Asterisk"},
-        {(char)43, "Plus sign"},
+        {(char)43, "Plus Sign"},
         {(char)44, "Comma"},
         {(char)45, "Hyphen-minus"},
         {(char)46, "Full stop"},
@@ -57,11 +59,11 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)57, "Digit Nine"},
         {(char)58, "Colon"},
         {(char)59, "Semicolon"},
-        {(char)60, "Less-than sign"},
-        {(char)61, "Equal sign"},
-        {(char)62, "Greater-than sign"},
+        {(char)60, "Less-than Sign"},
+        {(char)61, "Equal Sign"},
+        {(char)62, "Greater-than Sign"},
         {(char)63, "Question mark"},
-        {(char)64, "At sign"},
+        {(char)64, "At Sign"},
         {(char)65, "Latin Capital Letter A"},
         {(char)66, "Latin Capital Letter B"},
         {(char)67, "Latin Capital Letter C"},
@@ -128,37 +130,44 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
     private readonly Dictionary<char, string> CurrencyNames = new Dictionary<char, string>()
     {
-        {(char)36, "Dollar sign"},
-        {(char)162, "Cent sign"},
-        {(char)163, "Pound sign"},
-        {(char)164, "Currency sign"},
-        {(char)165, "Yen sign"},
-        {(char)8352, "Euro-Currency sign"},
-        {(char)8353, "Colon sign"},
-        {(char)8354, "Cruzeiro sign"},
-        {(char)8355, "French Franc sign"},
-        {(char)8356, "Lira sign"},
-        {(char)8357, "Mill sign"},
-        {(char)8358, "Naira sign"},
-        {(char)8359, "Peseta sign"},
-        {(char)8360, "Rupee sign"},
-        {(char)8361, "Won sign"},
-        {(char)8362, "New Sheqek sign"},
-        {(char)8363, "Dong sign"},
-        {(char)8364, "Euro sign"},
-        {(char)8365, "Kip sign"},
-        {(char)8366, "Tugrik sign"},
-        {(char)8367, "Drachma sign"},
-        {(char)8368, "German Penny sign"},
-        {(char)8369, "Peso sign"},
-        {(char)8370, "Guarani sign"},
-        {(char)8371, "Austral sign"},
-        {(char)8372, "Hryvnia sign"},
-        {(char)8373, "Cedi sign"},
-        {(char)8374, "Livre Tournois sign"},
-        {(char)8375, "Spesmilo sign"},
-        {(char)8376, "Tenge sign"},
-        {(char)8377, "Indian Rupee sign"},
+        {(char)36, "Dollar Sign"},
+        {(char)162, "Cent Sign"},
+        {(char)163, "Pound Sign"},
+        {(char)164, "Currency Sign"},
+        {(char)165, "Yen Sign"},
+        {(char)1423, "Armenian Dram Sign"},
+        {(char)1547, "Afghani Sign"},
+        {(char)2546, "Bengali Rupee Mark"},
+        {(char)2547, "Bengali Rupee Sign"},
+        {(char)3065, "Tamil Rupee Sign"},
+        {(char)3647, "Thai Currency Symbol Baht Sign"},
+        {(char)8352, "Euro-Currency Sign"},
+        {(char)8353, "Colon Sign"},
+        {(char)8354, "Cruzeiro Sign"},
+        {(char)8355, "French Franc Sign"},
+        {(char)8356, "Lira Sign"},
+        {(char)8357, "Mill Sign"},
+        {(char)8358, "Naira Sign"},
+        {(char)8359, "Peseta Sign"},
+        {(char)8360, "Rupee Sign"},
+        {(char)8361, "Won Sign"},
+        {(char)8362, "New Sheqek Sign"},
+        {(char)8363, "Dong Sign"},
+        {(char)8364, "Euro Sign"},
+        {(char)8365, "Kip Sign"},
+        {(char)8366, "Tugrik Sign"},
+        {(char)8367, "Drachma Sign"},
+        {(char)8368, "German Penny Sign"},
+        {(char)8369, "Peso Sign"},
+        {(char)8370, "Guarani Sign"},
+        {(char)8371, "Austral Sign"},
+        {(char)8372, "Hryvnia Sign"},
+        {(char)8373, "Cedi Sign"},
+        {(char)8374, "Livre Tournois Sign"},
+        {(char)8375, "Spesmilo Sign"},
+        {(char)8376, "Tenge Sign"},
+        {(char)8377, "Indian Rupee Sign"},
+        {(char)65020, "Rial Sign"}
     };
 
     private readonly Dictionary<char, string> GreekLetterNames = new Dictionary<char, string>()
@@ -286,6 +295,29 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)9798, "Neptune"},
         {(char)9799, "Pluto"}
     };
+
+    private readonly Dictionary<char, string> PlayingCardSuitNames = new Dictionary<char, string>()
+    {
+        {(char)9824, "Black Spade Suit"},
+        {(char)9825, "White Heart Suit"},
+        {(char)9826, "White Diamond Suit"},
+        {(char)9827, "Black Club Suit"},
+        {(char)9828, "White Spade Suit"},
+        {(char)9829, "Black Heart Suit"},
+        {(char)9830, "Black Diamond Suit"},
+        {(char)9831, "White Club Suit"}
+    };
+
+    private readonly Dictionary<char, string> MusicalNames = new Dictionary<char, string>()
+    {
+        {(char)9833, "Quarter Note"},
+        {(char)9834, "Eighth Note"},
+        {(char)9835, "Beamed Eighth Notes"},
+        {(char)9836, "Beamed Sixteenth Notes"},
+        {(char)9837, "Music Flat Sign"},
+        {(char)9838, "Music Natural Sign"},
+        {(char)9839, "Music Sharp Sign"}
+    };
     #endregion
 
     private Dictionary<char, string> AllUnicodeNames;
@@ -360,6 +392,16 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     AllUnicodeNames.Add(pair.Key, pair.Value);
             }
             foreach (var pair in PlanetNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+            foreach (var pair in PlayingCardSuitNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+            foreach (var pair in MusicalNames)
             {
                 if (!AllUnicodeNames.ContainsKey(pair.Key))
                     AllUnicodeNames.Add(pair.Key, pair.Value);
@@ -670,6 +712,8 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             "Arrows ()",
             $"Zodiac ({ZodiacNames.Count})",
             $"Planets ({PlanetNames.Count})",
+            $"Playing Card Suits ({PlayingCardSuitNames.Count})",
+            $"Musical ({MusicalNames.Count})",
             "Miscellaneous ()",
             $"★ Favorites ({favoriteUnicodeSymbols.Count})"
         };
@@ -801,6 +845,22 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     planetSymbols.Add(ch);
                 }
                 DrawUnicodeTable(2, 10, planetSymbols);
+                break;
+            case UnicodeCategory.PlayingCardSuits:
+                List<char> playingCardSuitSymbols = new List<char>();
+                foreach (char ch in PlayingCardSuitNames.Keys)
+                {
+                    playingCardSuitSymbols.Add(ch);
+                }
+                DrawUnicodeTable(1, playingCardSuitSymbols.Count, playingCardSuitSymbols);
+                break;
+            case UnicodeCategory.Musical:
+                List<char> musicalSymbols = new List<char>();
+                foreach (char ch in MusicalNames.Keys)
+                {
+                    musicalSymbols.Add(ch);
+                }
+                DrawUnicodeTable(1, 10, musicalSymbols);
                 break;
             case UnicodeCategory.Favorites:
                 DrawUnicodeTable(5, 10, favoriteUnicodeSymbols);
