@@ -26,9 +26,9 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     }
     #endregion
 
+    #region Unicode Tables
     private readonly Dictionary<char, string> ASCIIPrintableNames = new Dictionary<char, string>()
     {
-        #region ASCII-Printable
         {(char)32, "Space"},
         {(char)33, "Exclamation point"},
         {(char)34, "Quotation mark"},
@@ -62,70 +62,233 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)62, "Greater-than sign"},
         {(char)63, "Question mark"},
         {(char)64, "At sign"},
-        {(char)65, "Latin Capital letter A"},
-        {(char)66, "Latin Capital letter B"},
-        {(char)67, "Latin Capital letter C"},
-        {(char)68, "Latin Capital letter D"},
-        {(char)69, "Latin Capital letter E"},
-        {(char)70, "Latin Capital letter F"},
-        {(char)71, "Latin Capital letter G"},
-        {(char)72, "Latin Capital letter H"},
-        {(char)73, "Latin Capital letter I"},
-        {(char)74, "Latin Capital letter J"},
-        {(char)75, "Latin Capital letter K"},
-        {(char)76, "Latin Capital letter L"},
-        {(char)77, "Latin Capital letter M"},
-        {(char)78, "Latin Capital letter N"},
-        {(char)79, "Latin Capital letter O"},
-        {(char)80, "Latin Capital letter P"},
-        {(char)81, "Latin Capital letter Q"},
-        {(char)82, "Latin Capital letter R"},
-        {(char)83, "Latin Capital letter S"},
-        {(char)84, "Latin Capital letter T"},
-        {(char)85, "Latin Capital letter U"},
-        {(char)86, "Latin Capital letter V"},
-        {(char)87, "Latin Capital letter W"},
-        {(char)88, "Latin Capital letter X"},
-        {(char)89, "Latin Capital letter Y"},
-        {(char)90, "Latin Capital letter Z"},
+        {(char)65, "Latin Capital Letter A"},
+        {(char)66, "Latin Capital Letter B"},
+        {(char)67, "Latin Capital Letter C"},
+        {(char)68, "Latin Capital Letter D"},
+        {(char)69, "Latin Capital Letter E"},
+        {(char)70, "Latin Capital Letter F"},
+        {(char)71, "Latin Capital Letter G"},
+        {(char)72, "Latin Capital Letter H"},
+        {(char)73, "Latin Capital Letter I"},
+        {(char)74, "Latin Capital Letter J"},
+        {(char)75, "Latin Capital Letter K"},
+        {(char)76, "Latin Capital Letter L"},
+        {(char)77, "Latin Capital Letter M"},
+        {(char)78, "Latin Capital Letter N"},
+        {(char)79, "Latin Capital Letter O"},
+        {(char)80, "Latin Capital Letter P"},
+        {(char)81, "Latin Capital Letter Q"},
+        {(char)82, "Latin Capital Letter R"},
+        {(char)83, "Latin Capital Letter S"},
+        {(char)84, "Latin Capital Letter T"},
+        {(char)85, "Latin Capital Letter U"},
+        {(char)86, "Latin Capital Letter V"},
+        {(char)87, "Latin Capital Letter W"},
+        {(char)88, "Latin Capital Letter X"},
+        {(char)89, "Latin Capital Letter Y"},
+        {(char)90, "Latin Capital Letter Z"},
         {(char)91, "Left Square Bracket"},
         {(char)92, "Backslash"},
         {(char)93, "Right Square Bracket"},
         {(char)94, "Circumflex accent"},
         {(char)95, "Low line"},
         {(char)96, "Grave accent"},
-        {(char)97, "Latin Small letter A"},
-        {(char)98, "Latin Small letter B"},
-        {(char)99, "Latin Small letter C"},
-        {(char)100, "Latin Small letter D"},
-        {(char)101, "Latin Small letter E"},
-        {(char)102, "Latin Small letter F"},
-        {(char)103, "Latin Small letter G"},
-        {(char)104, "Latin Small letter H"},
-        {(char)105, "Latin Small letter I"},
-        {(char)106, "Latin Small letter J"},
-        {(char)107, "Latin Small letter K"},
-        {(char)108, "Latin Small letter L"},
-        {(char)109, "Latin Small letter M"},
-        {(char)110, "Latin Small letter N"},
-        {(char)111, "Latin Small letter O"},
-        {(char)112, "Latin Small letter P"},
-        {(char)113, "Latin Small letter Q"},
-        {(char)114, "Latin Small letter R"},
-        {(char)115, "Latin Small letter S"},
-        {(char)116, "Latin Small letter T"},
-        {(char)117, "Latin Small letter U"},
-        {(char)118, "Latin Small letter V"},
-        {(char)119, "Latin Small letter W"},
-        {(char)120, "Latin Small letter X"},
-        {(char)121, "Latin Small letter Y"},
-        {(char)122, "Latin Small letter Z"},
+        {(char)97, "Latin Small Letter A"},
+        {(char)98, "Latin Small Letter B"},
+        {(char)99, "Latin Small Letter C"},
+        {(char)100, "Latin Small Letter D"},
+        {(char)101, "Latin Small Letter E"},
+        {(char)102, "Latin Small Letter F"},
+        {(char)103, "Latin Small Letter G"},
+        {(char)104, "Latin Small Letter H"},
+        {(char)105, "Latin Small Letter I"},
+        {(char)106, "Latin Small Letter J"},
+        {(char)107, "Latin Small Letter K"},
+        {(char)108, "Latin Small Letter L"},
+        {(char)109, "Latin Small Letter M"},
+        {(char)110, "Latin Small Letter N"},
+        {(char)111, "Latin Small Letter O"},
+        {(char)112, "Latin Small Letter P"},
+        {(char)113, "Latin Small Letter Q"},
+        {(char)114, "Latin Small Letter R"},
+        {(char)115, "Latin Small Letter S"},
+        {(char)116, "Latin Small Letter T"},
+        {(char)117, "Latin Small Letter U"},
+        {(char)118, "Latin Small Letter V"},
+        {(char)119, "Latin Small Letter W"},
+        {(char)120, "Latin Small Letter X"},
+        {(char)121, "Latin Small Letter Y"},
+        {(char)122, "Latin Small Letter Z"},
         {(char)123, "Left Curly Bracket"},
         {(char)124, "Vertical bar"},
         {(char)125, "Right Curly Bracket"},
-        {(char)126, "Tilde"},
-        #endregion
+        {(char)126, "Tilde"}
     };
+
+    private readonly Dictionary<char, string> CurrencyNames = new Dictionary<char, string>()
+    {
+        {(char)36, "Dollar sign"},
+        {(char)162, "Cent sign"},
+        {(char)163, "Pound sign"},
+        {(char)164, "Currency sign"},
+        {(char)165, "Yen sign"},
+        {(char)8352, "Euro-Currency sign"},
+        {(char)8353, "Colon sign"},
+        {(char)8354, "Cruzeiro sign"},
+        {(char)8355, "French Franc sign"},
+        {(char)8356, "Lira sign"},
+        {(char)8357, "Mill sign"},
+        {(char)8358, "Naira sign"},
+        {(char)8359, "Peseta sign"},
+        {(char)8360, "Rupee sign"},
+        {(char)8361, "Won sign"},
+        {(char)8362, "New Sheqek sign"},
+        {(char)8363, "Dong sign"},
+        {(char)8364, "Euro sign"},
+        {(char)8365, "Kip sign"},
+        {(char)8366, "Tugrik sign"},
+        {(char)8367, "Drachma sign"},
+        {(char)8368, "German Penny sign"},
+        {(char)8369, "Peso sign"},
+        {(char)8370, "Guarani sign"},
+        {(char)8371, "Austral sign"},
+        {(char)8372, "Hryvnia sign"},
+        {(char)8373, "Cedi sign"},
+        {(char)8374, "Livre Tournois sign"},
+        {(char)8375, "Spesmilo sign"},
+        {(char)8376, "Tenge sign"},
+        {(char)8377, "Indian Rupee sign"},
+    };
+
+    private readonly Dictionary<char, string> GreekLetterNames = new Dictionary<char, string>()
+    {
+        {(char)913, "Greek Capital Letter Alpha"},
+        {(char)914, "Greek Capital Letter Beta"},
+        {(char)915, "Greek Capital Letter Gamma"},
+        {(char)916, "Greek Capital Letter Delta"},
+        {(char)917, "Greek Capital Letter Epsilon"},
+        {(char)918, "Greek Capital Letter Zeta"},
+        {(char)919, "Greek Capital Letter Eta"},
+        {(char)920, "Greek Capital Letter Theta"},
+        {(char)921, "Greek Capital Letter Iota"},
+        {(char)922, "Greek Capital Letter Kappa"},
+        {(char)923, "Greek Capital Letter Lamda"},
+        {(char)924, "Greek Capital Letter Mu"},
+        {(char)925, "Greek Capital Letter Nu"},
+        {(char)926, "Greek Capital Letter Xi"},
+        {(char)927, "Greek Capital Letter Omicron"},
+        {(char)928, "Greek Capital Letter Pi"},
+        {(char)929, "Greek Capital Letter Rho"},
+        {(char)931, "Greek Capital Letter Sigma"},
+        {(char)932, "Greek Capital Letter Tau"},
+        {(char)933, "Greek Capital Letter Upsilon"},
+        {(char)934, "Greek Capital Letter Phi"},
+        {(char)935, "Greek Capital Letter Chi"},
+        {(char)936, "Greek Capital Letter Psi"},
+        {(char)937, "Greek Capital Letter Omega"},
+        {(char)945, "Greek Small Letter Alpha"},
+        {(char)946, "Greek Small Letter Beta"},
+        {(char)947, "Greek Small Letter Gamma"},
+        {(char)948, "Greek Small Letter Delta"},
+        {(char)949, "Greek Small Letter Epsilon"},
+        {(char)950, "Greek Small Letter Zeta"},
+        {(char)951, "Greek Small Letter Eta"},
+        {(char)952, "Greek Small Letter Theta"},
+        {(char)953, "Greek Small Letter Iota"},
+        {(char)954, "Greek Small Letter Kappa"},
+        {(char)955, "Greek Small Letter Lamda"},
+        {(char)956, "Greek Small Letter Mu"},
+        {(char)957, "Greek Small Letter Nu"},
+        {(char)958, "Greek Small Letter Xi"},
+        {(char)959, "Greek Small Letter Omicron"},
+        {(char)960, "Greek Small Letter Pi"},
+        {(char)961, "Greek Small Letter Rho"},
+        {(char)962, "Greek Small Letter Final Sigma"},
+        {(char)963, "Greek Small Letter Sigma"},
+        {(char)964, "Greek Small Letter Tau"},
+        {(char)965, "Greek Small Letter Upsilon"},
+        {(char)966, "Greek Small Letter Phi"},
+        {(char)967, "Greek Small Letter Chi"},
+        {(char)968, "Greek Small Letter Psi"},
+        {(char)969, "Greek Small Letter Omega"}
+    };
+
+    private readonly Dictionary<char, string> RomanNumeralNames = new Dictionary<char, string>()
+    {
+        {(char)8544, "Roman Numeral One"},
+        {(char)8545, "Roman Numeral Two"},
+        {(char)8546, "Roman Numeral Three"},
+        {(char)8547, "Roman Numeral Four"},
+        {(char)8548, "Roman Numeral Five"},
+        {(char)8549, "Roman Numeral Six"},
+        {(char)8550, "Roman Numeral Seven"},
+        {(char)8551, "Roman Numeral Eight"},
+        {(char)8552, "Roman Numeral Nine"},
+        {(char)8553, "Roman Numeral Ten"},
+        {(char)8554, "Roman Numeral Eleven"},
+        {(char)8555, "Roman Numeral Twelve"},
+        {(char)8556, "Roman Numeral Fifty"},
+        {(char)8557, "Roman Numeral One Hundred"},
+        {(char)8558, "Roman Numeral Five Hundred"},
+        {(char)8559, "Roman Numeral One Thousand"},
+        {(char)8560, "Small Roman Numeral One"},
+        {(char)8561, "Small Roman Numeral Two"},
+        {(char)8562, "Small Roman Numeral Three"},
+        {(char)8563, "Small Roman Numeral Four"},
+        {(char)8564, "Small Roman Numeral Five"},
+        {(char)8565, "Small Roman Numeral Six"},
+        {(char)8566, "Small Roman Numeral Seven"},
+        {(char)8567, "Small Roman Numeral Eight"},
+        {(char)8568, "Small Roman Numeral Nine"},
+        {(char)8569, "Small Roman Numeral Ten"},
+        {(char)8570, "Small Roman Numeral Eleven"},
+        {(char)8571, "Small Roman Numeral Twelve"},
+        {(char)8572, "Small Roman Numeral Fifty"},
+        {(char)8573, "Small Roman Numeral One Hundred"},
+        {(char)8574, "Small Roman Numeral Five Hundred"},
+        {(char)8575, "Small Roman Numeral One Thousand"},
+        {(char)8576, "Roman Numeral One Thousand C D"},
+        {(char)8577, "Roman Numeral Five Thousand"},
+        {(char)8578, "Roman Numeral Ten Thousand"},
+        {(char)8583, "Roman Numeral Fifty Thousand"},
+        {(char)8584, "Roman Numeral One Hundred Thousand"}
+    };
+
+    private readonly Dictionary<char, string> ZodiacNames = new Dictionary<char, string>()
+    {
+        {(char)9800, "Aries"},
+        {(char)9801, "Taurus"},
+        {(char)9802, "Gemini"},
+        {(char)9803, "Cancer"},
+        {(char)9804, "Leo"},
+        {(char)9805, "Virgo"},
+        {(char)9806, "Libra"},
+        {(char)9807, "Scorpius"},
+        {(char)9808, "Sagittarius"},
+        {(char)9809, "Capricorn"},
+        {(char)9810, "Aquarius"},
+        {(char)9811, "Pisces"}
+    };
+
+    private readonly Dictionary<char, string> PlanetNames = new Dictionary<char, string>()
+    {
+        {(char)9737, "Sun"},
+        {(char)9789, "First Quarter Moon"},
+        {(char)9790, "Last Quarter Moon"},
+        {(char)9791, "Mercury"},
+        {(char)9792, "Venus"},
+        {(char)9793, "Earth"},
+        {(char)9794, "Mars"},
+        {(char)9795, "Jupiter"},
+        {(char)9796, "Saturn"},
+        {(char)9797, "Uranus"},
+        {(char)9798, "Neptune"},
+        {(char)9799, "Pluto"}
+    };
+    #endregion
+
+    private Dictionary<char, string> AllUnicodeNames;
 
     private static MiniUnicodeSymbolsTableEditor window;    // Editor window
     private Vector2 scrollPosition;                         // Current scroll position
@@ -168,6 +331,41 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
     private void OnEnable()
     {
+        if (AllUnicodeNames == null)
+        {
+            AllUnicodeNames = new Dictionary<char, string>();
+            foreach (var pair in ASCIIPrintableNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+            foreach (var pair in CurrencyNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+            foreach (var pair in GreekLetterNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+            foreach (var pair in RomanNumeralNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+            foreach (var pair in ZodiacNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+            foreach (var pair in PlanetNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+        }
+
         if (favoriteUnicodeSymbols == null)
         {
             favoriteUnicodeSymbols = new List<char>();
@@ -178,7 +376,6 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     continue;
 
                 char ch = (char)MUSTEditorPrefs.GetInt(GetFavoriteSymbolKey(i));
-                Debug.Log(ch);
                 if (ch == null)
                     continue;
 
@@ -272,7 +469,10 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             alignment = TextAnchor.MiddleCenter
         };
 
-        InitializeUnicodeSymbols();
+        if (unicodeSymbols == null)
+        {
+            unicodeSymbols = new List<char>();
+        }
 
         GUILayout.BeginHorizontal();
         if (GUILayout.Toggle(false, "Table", tabButtonStyle))
@@ -355,8 +555,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             #region Name
             GUILayout.BeginHorizontal();
             DrawBulletPoint("#0062ff");
-            GUILayout.Label($"Name: ", GUILayout.ExpandWidth(false));
-            //GUILayout.Label($"Name: {ASCIIPrintableNames[selectedSymbol]}", GUILayout.ExpandWidth(false));
+            GUILayout.Label($"Name: {AllUnicodeNames[selectedSymbol]}", GUILayout.ExpandWidth(false));
             GUILayout.Label($" ", GUILayout.ExpandWidth(false));
             GUILayout.EndHorizontal();
             #endregion
@@ -460,17 +659,17 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
         string[] categoryNames = new string[]
         {
-            "All ()",
-            "ASCII-Printable (95)",
-            "Currency ()",
-            "Greek Letters ()",
-            "Roman Numerals ()",
+            $"All ({AllUnicodeNames.Count})",
+            $"ASCII-Printable ({ASCIIPrintableNames.Count})",
+            $"Currency ({CurrencyNames.Count})",
+            $"Greek Letters ({GreekLetterNames.Count})",
+            $"Roman Numerals ({RomanNumeralNames.Count})",
             "Punctuation ()",
             "Math ()",
             "Geometric Shapes ()",
             "Arrows ()",
-            "Zodiac ()",
-            "Planets ()",
+            $"Zodiac ({ZodiacNames.Count})",
+            $"Planets ({PlanetNames.Count})",
             "Miscellaneous ()",
             $"★ Favorites ({favoriteUnicodeSymbols.Count})"
         };
@@ -545,10 +744,16 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     private void SetupUnicodeTable()
     {
         unicodeSymbols.Clear();
-        InitializeUnicodeSymbols();
-
         switch (unicodeCategory)
         {
+            case UnicodeCategory.All:
+                List<char> allSymbols = new List<char>();
+                foreach (char ch in AllUnicodeNames.Keys)
+                {
+                    allSymbols.Add(ch);
+                }
+                DrawUnicodeTable(6, 40, allSymbols);
+                break;
             case UnicodeCategory.ASCII:
                 List<char> asciiPrintableSymbols = new List<char>();
                 foreach (char ch in ASCIIPrintableNames.Keys)
@@ -556,6 +761,46 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     asciiPrintableSymbols.Add(ch);
                 }
                 DrawUnicodeTable(6, 16, asciiPrintableSymbols);
+                break;
+            case UnicodeCategory.Currency:
+                List<char> currencySymbols = new List<char>();
+                foreach (char ch in CurrencyNames.Keys)
+                {
+                    currencySymbols.Add(ch);
+                }
+                DrawUnicodeTable(5, 10, currencySymbols);
+                break;
+            case UnicodeCategory.GreekLetters:
+                List<char> greekLetterSymbols = new List<char>();
+                foreach (char ch in GreekLetterNames.Keys)
+                {
+                    greekLetterSymbols.Add(ch);
+                }
+                DrawUnicodeTable(5, 10, greekLetterSymbols);
+                break;
+            case UnicodeCategory.RomanNumerals:
+                List<char> romanNumeralSymbols = new List<char>();
+                foreach (char ch in RomanNumeralNames.Keys)
+                {
+                    romanNumeralSymbols.Add(ch);
+                }
+                DrawUnicodeTable(5, 10, romanNumeralSymbols);
+                break;
+            case UnicodeCategory.Zodiac:
+                List<char> zodiacSymbols = new List<char>();
+                foreach (char ch in ZodiacNames.Keys)
+                {
+                    zodiacSymbols.Add(ch);
+                }
+                DrawUnicodeTable(2, 10, zodiacSymbols);
+                break;
+            case UnicodeCategory.Planets:
+                List<char> planetSymbols = new List<char>();
+                foreach (char ch in PlanetNames.Keys)
+                {
+                    planetSymbols.Add(ch);
+                }
+                DrawUnicodeTable(2, 10, planetSymbols);
                 break;
             case UnicodeCategory.Favorites:
                 DrawUnicodeTable(5, 10, favoriteUnicodeSymbols);
@@ -577,7 +822,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 char us = characters[index];
                 if (!unicodeSymbols.Contains(us))
                 {
-                    characters.Add(us);
+                    unicodeSymbols.Add(us);
                 }
                 DrawSymbolButton(us);
 
@@ -805,7 +1050,6 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {
             selectedIndex = unicodeSymbols.IndexOf(us);
             selectedSymbol = us;
-            Debug.Log($"Index: {selectedIndex}");
 
             ShowSymbolContextMenu(us);
         }
@@ -920,13 +1164,5 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     }
     #endregion
 
-    private void OnDisable()
-    {
-        // Save user's favorite symbols to EditorPrefs.
-        for (int i = 0; i < favoriteUnicodeSymbols.Count; i++)
-        {
-            Debug.Log(favoriteUnicodeSymbols[i]);
-        }
-        //Debug.Log($"Symbol: {selectedSymbol}");
-    }
+    private void OnDisable() { }
 }
