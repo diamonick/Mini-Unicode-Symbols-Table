@@ -17,14 +17,13 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         RomanNumerals = 4,
         Punctuation = 5,
         Math = 6,
-        GeometricShapes = 7,
-        Arrows = 8,
-        Zodiac = 9,
-        Planets = 10,
-        PlayingCardSuits = 11,
-        Musical = 12,
-        Miscellaneous = 13,
-        Favorites = 14
+        Arrows = 7,
+        Zodiac = 8,
+        Planets = 9,
+        PlayingCardSuits = 10,
+        Musical = 11,
+        Miscellaneous = 12,
+        Favorites = 13
     }
     #endregion
 
@@ -123,7 +122,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)121, "Latin Small Letter Y"},
         {(char)122, "Latin Small Letter Z"},
         {(char)123, "Left Curly Bracket"},
-        {(char)124, "Vertical bar"},
+        {(char)124, "Vertical Line"},
         {(char)125, "Right Curly Bracket"},
         {(char)126, "Tilde"}
     };
@@ -264,6 +263,100 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)8584, "Roman Numeral One Hundred Thousand"}
     };
 
+    private readonly Dictionary<char, string> MathNames = new Dictionary<char, string>()
+    {
+        {(char)43, "Plus Sign"},
+        {(char)60, "Less-than Sign"},
+        {(char)61, "Equal Sign"},
+        {(char)62, "Greater-than Sign"},
+        {(char)124, "Vertical Line"},
+        {(char)126, "Tilde"},
+        {(char)172, "Not Sign"},
+        {(char)177, "Plus-Minus Sign"},
+        {(char)215, "Multiplication Sign"},
+        {(char)247, "Division Sign"},
+        {(char)1014, "Greek Reversed Lunate Epsilon Symbol"},
+        {(char)1542, "Arabic-Indic Cube Root"},
+        {(char)1543, "Arabic-Indic Fourth Root"},
+        {(char)1544, "Arabic Ray"},
+        {(char)8260, "Fraction Slash"},
+        {(char)8274, "Commercial Minus Sign"},
+        {(char)8314, "Superscript Plus Sign"},
+        {(char)8315, "Superscript Minus Sign"},
+        {(char)8316, "Superscript Equal Sign"},
+        {(char)8330, "Subscript Plus Sign"},
+        {(char)8331, "Subscript Minus Sign"},
+        {(char)8332, "Subscript Equal Sign"},
+        {(char)8704, "For All"},
+        {(char)8705, "Complement"},
+        {(char)8706, "Partial Differential"},
+        {(char)8707, "There Exists"},
+        {(char)8708, "There Does Not Exist"},
+        {(char)8709, "Empty Set"},
+        {(char)8710, "Increment"},
+        {(char)8711, "Nabla"},
+        {(char)8712, "Element Of"},
+        {(char)8713, "Not An Element Of"},
+        {(char)8714, "Small Element Of"},
+        {(char)8715, "Contains as Member"},
+        {(char)8716, "Does Not Contain as Member"},
+        {(char)8717, "Small Contains as Member"},
+        {(char)8719, "N-Ary Product"},
+        {(char)8720, "N-Ary Coproduct"},
+        {(char)8721, "N-Ary Summation"},
+        {(char)8722, "Minus Sign"},
+        {(char)8723, "Minus-or-Plus Sign"},
+        {(char)8724, "Dot Plus"},
+        {(char)8727, "Asterisk Operator"},
+        {(char)8728, "Ring Operator"},
+        {(char)8729, "Bullet Operator"},
+        {(char)8730, "Square Root"},
+        {(char)8731, "Cube Root"},
+        {(char)8732, "Fourth Root"},
+        {(char)8733, "Proportional To"},
+        {(char)8734, "Infinity"},
+        {(char)8735, "Right Angle"},
+        {(char)8736, "Angle"},
+        {(char)8737, "Measured Angle"},
+        {(char)8738, "Spherical Angle"},
+        {(char)8740, "Does Not Divide"},
+        {(char)8741, "Parallel To"},
+        {(char)8742, "Not Parallel To"},
+        {(char)8743, "Logical And"},
+        {(char)8744, "Logical Or"},
+        {(char)8745, "Intersection"},
+        {(char)8746, "Union"},
+        {(char)8747, "Integral"},
+        {(char)8758, "Ratio"},
+        {(char)8759, "Proportion"},
+        {(char)8773, "Approximately Equal To"},
+        {(char)8776, "Almost Equal To"},
+        {(char)8777, "Not Almost Equal To"},
+        {(char)8778, "Almost Equal or Equal To"},
+        {(char)8780, "All Equal To"},
+        {(char)8781, "Equivalent To"},
+        {(char)8782, "Geometrically Equivalent To"},
+        {(char)8799, "Questioned Equal To"},
+        {(char)8800, "Not Equal To"},
+        {(char)8801, "Identical To"},
+        {(char)8802, "Not Identical To"},
+        {(char)8804, "Less-Than or Equal To"},
+        {(char)8805, "Greater-Than or Equal To"},
+        {(char)8810, "Much Less-Than"},
+        {(char)8811, "Much Greater-Than"},
+        {(char)8814, "Not Less-Than"},
+        {(char)8815, "Not Greater-Than"},
+        {(char)8834, "Subset Of"},
+        {(char)8835, "Superset Of"},
+        {(char)8836, "Not A Subset Of"},
+        {(char)8837, "Not A Superset Of"},
+        {(char)8838, "Subset Of or Equal To"},
+        {(char)8839, "Superset Of or Equal To"},
+        {(char)8840, "Neither A Subset Of Nor Equal To"},
+        {(char)8841, "Neither A Superset Of Nor Equal To"},
+        {(char)8903, "Division Times"},
+    };
+
     private readonly Dictionary<char, string> ZodiacNames = new Dictionary<char, string>()
     {
         {(char)9800, "Aries"},
@@ -337,7 +430,6 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     private GUIStyle copyButtonStyle;
 
     private bool infoFoldout = false;
-    private bool settingsFoldout = false;
 
     private UnicodeCategory unicodeCategory = UnicodeCategory.ASCII;
 
@@ -382,6 +474,11 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     AllUnicodeNames.Add(pair.Key, pair.Value);
             }
             foreach (var pair in RomanNumeralNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+            foreach (var pair in MathNames)
             {
                 if (!AllUnicodeNames.ContainsKey(pair.Key))
                     AllUnicodeNames.Add(pair.Key, pair.Value);
@@ -516,16 +613,16 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             unicodeSymbols = new List<char>();
         }
 
-        GUILayout.BeginHorizontal();
-        if (GUILayout.Toggle(false, "Table", tabButtonStyle))
-        {
+        //GUILayout.BeginHorizontal();
+        //if (GUILayout.Toggle(false, "Table", tabButtonStyle))
+        //{
 
-        }
-        if (GUILayout.Toggle(false, "Settings", tabButtonStyle))
-        {
+        //}
+        //if (GUILayout.Toggle(false, "Settings", tabButtonStyle))
+        //{
 
-        }
-        GUILayout.EndHorizontal();
+        //}
+        //GUILayout.EndHorizontal();
 
         GUILayout.BeginVertical();
         #region Preview Box
@@ -706,10 +803,9 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             $"Currency ({CurrencyNames.Count})",
             $"Greek Letters ({GreekLetterNames.Count})",
             $"Roman Numerals ({RomanNumeralNames.Count})",
-            "Punctuation ()",
-            "Math ()",
-            "Geometric Shapes ()",
-            "Arrows ()",
+            $"Punctuation ()",
+            $"Math ({MathNames.Count})",
+            $"Arrows ()",
             $"Zodiac ({ZodiacNames.Count})",
             $"Planets ({PlanetNames.Count})",
             $"Playing Card Suits ({PlayingCardSuitNames.Count})",
@@ -829,6 +925,14 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     romanNumeralSymbols.Add(ch);
                 }
                 DrawUnicodeTable(5, 10, romanNumeralSymbols);
+                break;
+            case UnicodeCategory.Math:
+                List<char> mathSymbols = new List<char>();
+                foreach (char ch in MathNames.Keys)
+                {
+                    mathSymbols.Add(ch);
+                }
+                DrawUnicodeTable(6, 15, mathSymbols);
                 break;
             case UnicodeCategory.Zodiac:
                 List<char> zodiacSymbols = new List<char>();
