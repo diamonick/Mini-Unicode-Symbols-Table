@@ -31,8 +31,8 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     private readonly Dictionary<char, string> ASCIIPrintableNames = new Dictionary<char, string>()
     {
         {(char)32, "Space"},
-        {(char)33, "Exclamation point"},
-        {(char)34, "Quotation mark"},
+        {(char)33, "Exclamation Mark"},
+        {(char)34, "Quotation Mark"},
         {(char)35, "Number Sign"},
         {(char)36, "Dollar Sign"},
         {(char)37, "Percent Sign"},
@@ -62,7 +62,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)61, "Equal Sign"},
         {(char)62, "Greater-than Sign"},
         {(char)63, "Question mark"},
-        {(char)64, "At Sign"},
+        {(char)64, "Commercial At"},
         {(char)65, "Latin Capital Letter A"},
         {(char)66, "Latin Capital Letter B"},
         {(char)67, "Latin Capital Letter C"},
@@ -261,6 +261,40 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)8578, "Roman Numeral Ten Thousand"},
         {(char)8583, "Roman Numeral Fifty Thousand"},
         {(char)8584, "Roman Numeral One Hundred Thousand"}
+    };
+
+    private readonly Dictionary<char, string> PunctuationNames = new Dictionary<char, string>()
+    {
+        {(char)33, "Exclamation Mark"},
+        {(char)34, "Quotation Mark"},
+        {(char)35, "Number Sign"},
+        {(char)37, "Percent Sign"},
+        {(char)38, "Ampersand"},
+        {(char)39, "Apostrophe"},
+        {(char)42, "Asterisk"},
+        {(char)44, "Comma"},
+        {(char)46, "Full stop"},
+        {(char)47, "Slash (Solidus)"},
+        {(char)58, "Colon"},
+        {(char)59, "Semicolon"},
+        {(char)63, "Question Mark"},
+        {(char)64, "Commercial At"},
+        {(char)92, "Reverse Solidus"},
+        {(char)161, "Inverted Exclamation Mark"},
+        {(char)167, "Section Sign"},
+        {(char)182, "Pilcrow Sign"},
+        {(char)183, "Middle Dot"},
+        {(char)191, "Inverted Question Mark"},
+        {(char)8226, "Bullet"},
+        {(char)8227, "Triangular Bullet"},
+        {(char)8230, "Horizontal Ellipsis"},
+        {(char)8231, "Hyphenation Point"},
+        {(char)8240, "Per Mille Sign"},
+        {(char)8251, "Reference Mark"},
+        {(char)8252, "Double Exclamation Mark"},
+        {(char)8263, "Double Question Mark"},
+        {(char)8264, "Question Exclamation Mark"},
+        {(char)8265, "Exclamation Question Mark"},
     };
 
     private readonly Dictionary<char, string> MathNames = new Dictionary<char, string>()
@@ -491,6 +525,11 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     AllUnicodeNames.Add(pair.Key, pair.Value);
             }
             foreach (var pair in RomanNumeralNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+            foreach (var pair in PunctuationNames)
             {
                 if (!AllUnicodeNames.ContainsKey(pair.Key))
                     AllUnicodeNames.Add(pair.Key, pair.Value);
@@ -825,7 +864,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             $"Currency ({CurrencyNames.Count})",
             $"Greek Letters ({GreekLetterNames.Count})",
             $"Roman Numerals ({RomanNumeralNames.Count})",
-            $"Punctuation ()",
+            $"Punctuation ({PunctuationNames.Count})",
             $"Math ({MathNames.Count})",
             $"Arrows ({ArrowNames.Count})",
             $"Zodiac ({ZodiacNames.Count})",
@@ -947,6 +986,14 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     romanNumeralSymbols.Add(ch);
                 }
                 DrawUnicodeTable(5, 10, romanNumeralSymbols);
+                break;
+            case UnicodeCategory.Punctuation:
+                List<char> punctuationSymbols = new List<char>();
+                foreach (char ch in PunctuationNames.Keys)
+                {
+                    punctuationSymbols.Add(ch);
+                }
+                DrawUnicodeTable(3, 10, punctuationSymbols);
                 break;
             case UnicodeCategory.Math:
                 List<char> mathSymbols = new List<char>();
