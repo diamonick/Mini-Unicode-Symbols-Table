@@ -357,6 +357,37 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)8903, "Division Times"},
     };
 
+    private readonly Dictionary<char, string> ArrowNames = new Dictionary<char, string>()
+    {
+        {(char)8592, "Leftwards Arrow"},
+        {(char)8593, "Upwards Arrow"},
+        {(char)8594, "Righwards Arrow"},
+        {(char)8595, "Downwards Arrow"},
+        {(char)8596, "Left Right Arrow"},
+        {(char)8597, "Up Down Arrow"},
+        {(char)8598, "North West Arrow"},
+        {(char)8599, "North East Arrow"},
+        {(char)8600, "South East Arrow"},
+        {(char)8601, "South West Arrow"},
+        {(char)8604, "Leftwards Wave Arrow"},
+        {(char)8605, "Rightwards Wave Arrow"},
+        {(char)8630, "Anticlockwise Top Semicircle Arrow"},
+        {(char)8631, "Clockwise Top Semicircle Arrow"},
+        {(char)8634, "Anticlockwise Open Circle Arrow"},
+        {(char)8635, "Clockwise Open Circle Arrow"},
+        {(char)8644, "Rightwards Arrow Over Leftwards Arrow"},
+        {(char)8645, "Upwards Arrow Leftwards Of Downwards Arrow"},
+        {(char)8646, "Leftwards Arrow Over Rightwards Arrow"},
+        {(char)8647, "Leftwards Paired Arrow"},
+        {(char)8648, "Upwards Paired Arrow"},
+        {(char)8649, "Rightwards Paired Arrow"},
+        {(char)8650, "Downwards Paired Arrow"},
+        {(char)8672, "Leftwards Dashed Arrow"},
+        {(char)8673, "Upwards Dashed Arrow"},
+        {(char)8674, "Rightwards Dashed Arrow"},
+        {(char)8675, "Downwards Dashed Arrow"}
+    };
+
     private readonly Dictionary<char, string> ZodiacNames = new Dictionary<char, string>()
     {
         {(char)9800, "Aries"},
@@ -447,10 +478,11 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// Display the Mini Unicode Symbols Table menu item. (Tools -> Mini Unicode Symbols Table)
     /// Keyboard Shortcut: ctrl-alt-D (Windows), cmd-alt-D (macOS).
     /// </summary>
-    [MenuItem("Tools/Mini Unicode Symbols Table", false, 10)]
+    [MenuItem("Tools/Massive Unicode Symbols Table", false, 10)]
     public static void DisplayWindow()
     {
-        window = GetWindow<MiniUnicodeSymbolsTableEditor>("Mini Unicode Symbols Table (MUST) V1.0");
+        window = GetWindow<MiniUnicodeSymbolsTableEditor>("Massive Unicode Symbols Table (MUST) V1.0");
+        //CreateInstance<MiniUnicodeSymbolsTableEditor>().Show();
     }
 
     private void OnEnable()
@@ -479,6 +511,11 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     AllUnicodeNames.Add(pair.Key, pair.Value);
             }
             foreach (var pair in MathNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+            foreach (var pair in ArrowNames)
             {
                 if (!AllUnicodeNames.ContainsKey(pair.Key))
                     AllUnicodeNames.Add(pair.Key, pair.Value);
@@ -531,7 +568,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         // Get window.
         if (window == null)
         {
-            window = GetWindow<MiniUnicodeSymbolsTableEditor>("Mini Unicode Symbols Table (MUST) V1.0");
+            window = GetWindow<MiniUnicodeSymbolsTableEditor>("Massive Unicode Symbols Table (MUST) V1.0");
         }
 
         // Set minimum & maximum size of the editor window.
@@ -805,7 +842,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             $"Roman Numerals ({RomanNumeralNames.Count})",
             $"Punctuation ()",
             $"Math ({MathNames.Count})",
-            $"Arrows ()",
+            $"Arrows ({ArrowNames.Count})",
             $"Zodiac ({ZodiacNames.Count})",
             $"Planets ({PlanetNames.Count})",
             $"Playing Card Suits ({PlayingCardSuitNames.Count})",
@@ -933,6 +970,14 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     mathSymbols.Add(ch);
                 }
                 DrawUnicodeTable(6, 15, mathSymbols);
+                break;
+            case UnicodeCategory.Arrows:
+                List<char> arrowSymbols = new List<char>();
+                foreach (char ch in ArrowNames.Keys)
+                {
+                    arrowSymbols.Add(ch);
+                }
+                DrawUnicodeTable(6, 15, arrowSymbols);
                 break;
             case UnicodeCategory.Zodiac:
                 List<char> zodiacSymbols = new List<char>();
