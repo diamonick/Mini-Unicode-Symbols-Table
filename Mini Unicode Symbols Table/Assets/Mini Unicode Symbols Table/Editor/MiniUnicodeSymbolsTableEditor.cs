@@ -22,7 +22,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         Planets = 9,
         PlayingCardSuits = 10,
         Musical = 11,
-        Miscellaneous = 12,
+        Other = 12,
         Favorites = 13
     }
     #endregion
@@ -285,6 +285,10 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)182, "Pilcrow Sign"},
         {(char)183, "Middle Dot"},
         {(char)191, "Inverted Question Mark"},
+        {(char)8216, "Left Single Quotation Mark"},
+        {(char)8217, "Right Single Quotation Mark"},
+        {(char)8220, "Left Double Quotation Mark"},
+        {(char)8221, "Right Double Quotation Mark"},
         {(char)8226, "Bullet"},
         {(char)8227, "Triangular Bullet"},
         {(char)8230, "Horizontal Ellipsis"},
@@ -461,6 +465,28 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)9838, "Music Natural Sign"},
         {(char)9839, "Music Sharp Sign"}
     };
+
+    private readonly Dictionary<char, string> OtherNames = new Dictionary<char, string>()
+    {
+        {(char)169, "Copyright Sign"},
+        {(char)174, "Registered Sign"},
+        {(char)176, "Degree Sign"},
+        {(char)8451, "Degree Celsius"},
+        {(char)8457, "Degree Fahrenheit"},
+        {(char)8471, "Sound Recording Copyright"},
+        {(char)8480, "Service Mark"},
+        {(char)8481, "Telephone Sign"},
+        {(char)8482, "Trade Mark Sign"},
+        {(char)8507, "Facsimile Sign"},
+        {(char)8984, "Place of Interest Sign"},
+        {(char)9733, "Black Star"},
+        {(char)9734, "White Star"},
+        {(char)9786, "White Smiling Face"},
+        {(char)9787, "Black Smiling Face"},
+        {(char)9888, "Warning Sign"},
+        {(char)10003, "Check Mark"},
+        {(char)65532, "Object Replacement Character"}
+    };
     #endregion
 
     private Dictionary<char, string> AllUnicodeNames;
@@ -560,6 +586,11 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     AllUnicodeNames.Add(pair.Key, pair.Value);
             }
             foreach (var pair in MusicalNames)
+            {
+                if (!AllUnicodeNames.ContainsKey(pair.Key))
+                    AllUnicodeNames.Add(pair.Key, pair.Value);
+            }
+            foreach (var pair in OtherNames)
             {
                 if (!AllUnicodeNames.ContainsKey(pair.Key))
                     AllUnicodeNames.Add(pair.Key, pair.Value);
@@ -871,7 +902,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             $"Planets ({PlanetNames.Count})",
             $"Playing Card Suits ({PlayingCardSuitNames.Count})",
             $"Musical ({MusicalNames.Count})",
-            "Miscellaneous ()",
+            $"Other ({OtherNames.Count})",
             $"★ Favorites ({favoriteUnicodeSymbols.Count})"
         };
         GUI.contentColor = AddColor(Color.white);
@@ -993,7 +1024,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     punctuationSymbols.Add(ch);
                 }
-                DrawUnicodeTable(3, 10, punctuationSymbols);
+                DrawUnicodeTable(4, 10, punctuationSymbols);
                 break;
             case UnicodeCategory.Math:
                 List<char> mathSymbols = new List<char>();
@@ -1042,6 +1073,14 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     musicalSymbols.Add(ch);
                 }
                 DrawUnicodeTable(1, 10, musicalSymbols);
+                break;
+            case UnicodeCategory.Other:
+                List<char> otherSymbols = new List<char>();
+                foreach (char ch in OtherNames.Keys)
+                {
+                    otherSymbols.Add(ch);
+                }
+                DrawUnicodeTable(2, 10, otherSymbols);
                 break;
             case UnicodeCategory.Favorites:
                 DrawUnicodeTable(5, 10, favoriteUnicodeSymbols);
