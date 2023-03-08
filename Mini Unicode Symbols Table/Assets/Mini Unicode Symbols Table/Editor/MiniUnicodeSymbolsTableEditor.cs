@@ -369,23 +369,8 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)8599, "North East Arrow"},
         {(char)8600, "South East Arrow"},
         {(char)8601, "South West Arrow"},
-        {(char)8604, "Leftwards Wave Arrow"},
-        {(char)8605, "Rightwards Wave Arrow"},
-        {(char)8630, "Anticlockwise Top Semicircle Arrow"},
-        {(char)8631, "Clockwise Top Semicircle Arrow"},
         {(char)8634, "Anticlockwise Open Circle Arrow"},
-        {(char)8635, "Clockwise Open Circle Arrow"},
-        {(char)8644, "Rightwards Arrow Over Leftwards Arrow"},
-        {(char)8645, "Upwards Arrow Leftwards Of Downwards Arrow"},
-        {(char)8646, "Leftwards Arrow Over Rightwards Arrow"},
-        {(char)8647, "Leftwards Paired Arrow"},
-        {(char)8648, "Upwards Paired Arrow"},
-        {(char)8649, "Rightwards Paired Arrow"},
-        {(char)8650, "Downwards Paired Arrow"},
-        {(char)8672, "Leftwards Dashed Arrow"},
-        {(char)8673, "Upwards Dashed Arrow"},
-        {(char)8674, "Rightwards Dashed Arrow"},
-        {(char)8675, "Downwards Dashed Arrow"}
+        {(char)8635, "Clockwise Open Circle Arrow"}
     };
 
     private readonly Dictionary<char, string> ZodiacNames = new Dictionary<char, string>()
@@ -977,7 +962,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     arrowSymbols.Add(ch);
                 }
-                DrawUnicodeTable(6, 15, arrowSymbols);
+                DrawUnicodeTable(2, 10, arrowSymbols);
                 break;
             case UnicodeCategory.Zodiac:
                 List<char> zodiacSymbols = new List<char>();

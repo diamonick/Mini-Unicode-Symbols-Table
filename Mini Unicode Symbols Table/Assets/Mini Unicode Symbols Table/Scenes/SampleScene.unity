@@ -430,10 +430,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u266A"
+  m_text: "\u2190"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7055d5bb794a1cb47bb79a9cc0b124c8, type: 2}
-  m_sharedMaterial: {fileID: 2469532004654706993, guid: 7055d5bb794a1cb47bb79a9cc0b124c8, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 72475e628e867d9448c7ed683a7fb8f2, type: 2}
+  m_sharedMaterial: {fileID: 63241078717396067, guid: 72475e628e867d9448c7ed683a7fb8f2, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -577,7 +577,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u21E3"
+  m_Text: 
 --- !u!222 &1922309487
 CanvasRenderer:
   m_ObjectHideFlags: 0

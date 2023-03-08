@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 827888c8596b46e489006a74d51ac883
+guid: ed3055c4cb80dc743a81ec0b053256a2
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,10 +9,11 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Arial
+  - Inter
   fallbackFontReferences:
-  - {fileID: 12800000, guid: 0018098bb9bc0824b86cd4c4a5b1b7c1, type: 3}
-  - {fileID: 12800000, guid: 72b695130d504f64399b2fdaf608a1c7, type: 3}
+  - {fileID: 12800000, guid: 4de7bf7de9cdf094fa63d608643cc8ab, type: 3}
+  - {fileID: 12800000, guid: 712b76c0add59854b91a19311977a301, type: 3}
+  - {fileID: 12800000, guid: 925fad797d4f2e64b84256492f9b2ad8, type: 3}
   customCharacters: 
   fontRenderingMode: 0
   ascentCalculationMode: 1
