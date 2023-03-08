@@ -25,6 +25,12 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         Other = 12,
         Favorites = 13
     }
+
+    public enum Tab
+    {
+        Table = 0,
+        Settings = 1
+    }
     #endregion
 
     #region Unicode Tables
@@ -507,6 +513,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
     private bool infoFoldout = false;
 
+    private Tab mainTab = Tab.Table;
     private UnicodeCategory unicodeCategory = UnicodeCategory.ASCII;
 
     private List<char> unicodeSymbols;
@@ -518,6 +525,36 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     private char selectedSymbol = ' ';
     private char favoriteSymbolPending = ' ';
     private int selectedIndex = 0;
+
+    #region Settings
+    private readonly string[] ColorStyles = new string[16]
+    {
+        "#ff3838",      // 0
+        "#ff512e",      // 1
+        "#ff852e",      // 2
+        "#00a81a",      // 3
+        "#0062ff",      // 4
+        "#b22eff",      // 5
+        "#ff006a",      // 6
+        "#00a9ff",      // 7
+        "#75523f",      // 8
+        "#b978ff",      // 9
+        "#6f00ff",      // 10
+        "#1d8a7d",      // 11
+        "#5a8f00",      // 12
+        "#b08a64",      // 13
+        "#7c888f",      // 14
+        "#0a0c0d",      // 15
+    };
+
+    private string mainColorStyle;
+
+    #region Settings Tooltips
+    private readonly string deleteAllFavoritesTooltip = "Click this button to delete all Unicode symbols from ★ Favorites.";
+    private readonly string documentationTooltip = "Click this button to see the official documentation on how to use " +
+                                                   "the Massive Unicode Symbols Table (MUST).";
+    #endregion
+    #endregion
 
     /// <summary>
     /// Display the Mini Unicode Symbols Table menu item. (Tools -> Mini Unicode Symbols Table)
@@ -613,6 +650,9 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 favoriteUnicodeSymbols.Add(ch);
             }
         }
+
+        // Set the main color style of the editor window.
+        SetColorStyle(6);
     }
 
     /// <summary>
@@ -700,196 +740,219 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             alignment = TextAnchor.MiddleCenter
         };
 
+        GUIStyle settingSubButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 16,
+            fixedHeight = 36,
+            alignment = TextAnchor.MiddleCenter
+        };
+
+        GUIStyle colorLabelStyle = new GUIStyle(GUI.skin.label)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 18,
+            alignment = TextAnchor.MiddleCenter
+        };
+
         if (unicodeSymbols == null)
         {
             unicodeSymbols = new List<char>();
         }
 
-        //GUILayout.BeginHorizontal();
-        //if (GUILayout.Toggle(false, "Table", tabButtonStyle))
-        //{
-
-        //}
-        //if (GUILayout.Toggle(false, "Settings", tabButtonStyle))
-        //{
-
-        //}
-        //GUILayout.EndHorizontal();
-
-        GUILayout.BeginVertical();
-        #region Preview Box
-        GUI.backgroundColor = AddColor("#0062ff") * 3f;
-        GUILayout.BeginVertical(GUI.skin.box);
-        GUI.backgroundColor = Color.white;
-        symbolPreviewStyle.normal.textColor = Color.white;
-        GUILayout.Label(selectedSymbol.ToString(), symbolPreviewStyle, GUILayout.Height(96f));
-        GUI.backgroundColor = AddColor("#0062ff") * 3f;
-        previewHeaderStyle.normal.textColor = Color.white;
-        GUILayout.Label(CharToUnicode(selectedSymbol), previewHeaderStyle);
-        GUI.backgroundColor = Color.white;
-        GUILayout.EndVertical();
-
+        #region Tabs
         GUILayout.BeginHorizontal();
-        #region Previous Symbol
-        GUIContent prevSymbolContent = new GUIContent("◀", "");
-        GUI.backgroundColor = AddColor("#0062ff") * 1.75f;
-        bool onPrevSymbolClick = GUILayout.Button(prevSymbolContent, sideButtonStyle);
-        GUI.backgroundColor = Color.white;
-        if (onPrevSymbolClick)
+        GUI.backgroundColor = mainTab == Tab.Table ? AddColor(mainColorStyle) * 0.75f : AddColor(mainColorStyle) * 1.75f;
+        GUI.contentColor = mainTab == Tab.Table ? Color.white * 0.75f : Color.white;
+        if (GUILayout.Toggle(mainTab == Tab.Table, "Table", tabButtonStyle))
         {
-            PreviousSymbol();
+            mainTab = Tab.Table;
         }
-        #endregion
-
-        #region Copy
-        var copyIcon = (Texture2D)AssetDatabase.LoadAssetAtPath(copyIconPath, typeof(Texture2D));
-        EditorGUIUtility.SetIconSize(new Vector2(24f, 24f));
-
-        GUIContent copyContent = new GUIContent(" Copy", copyIcon, copySymbolTooltip);
-        GUI.backgroundColor = AddColor("#0062ff") * 1.75f;
-        bool onCopyClick = GUILayout.Button(copyContent, copyButtonStyle);
-        GUI.backgroundColor = Color.white;
-        if (onCopyClick)
+        GUI.backgroundColor = mainTab == Tab.Settings ? AddColor(mainColorStyle) * 0.75f : AddColor(mainColorStyle) * 1.75f;
+        GUI.contentColor = mainTab == Tab.Settings ? Color.white * 0.75f : Color.white;
+        if (GUILayout.Toggle(mainTab == Tab.Settings, "Settings", tabButtonStyle))
         {
-            ShowCopyContextMenu(selectedSymbol);
-            CopyToClipboard(selectedSymbol.ToString());
+            mainTab = Tab.Settings;
         }
-        #endregion
-
-        #region Next Symbol
-        GUIContent nextSymbolContent = new GUIContent("▶", "");
-        GUI.backgroundColor = AddColor("#0062ff") * 1.75f;
-        bool onNextSymbolClick = GUILayout.Button(nextSymbolContent, sideButtonStyle);
         GUI.backgroundColor = Color.white;
-        if (onNextSymbolClick)
-        {
-            NextSymbol();
-        }
-        #endregion
         GUILayout.EndHorizontal();
+        #endregion
 
-        DrawLine(GetColorFromHexString("#555555"), 1, 4f);
-
-        #region Symbol Information
-        GUILayout.BeginVertical(EditorStyles.helpBox);
-        infoFoldout = EditorGUILayout.Foldout(infoFoldout, "ⓘ Symbol Information", true);
-        if (infoFoldout)
+        if (mainTab == Tab.Table)
         {
-            GUILayout.BeginVertical(EditorStyles.helpBox);
-            #region Symbol
-            GUILayout.BeginHorizontal();
-            DrawBulletPoint("#0062ff");
-            GUILayout.Label($"Symbol: ", GUILayout.ExpandWidth(false));
-            GUILayout.Label($"{selectedSymbol}", GUILayout.ExpandWidth(false));
-            GUILayout.EndHorizontal();
-            #endregion
-            #region Name
-            GUILayout.BeginHorizontal();
-            DrawBulletPoint("#0062ff");
-            GUILayout.Label($"Name: {AllUnicodeNames[selectedSymbol]}", GUILayout.ExpandWidth(false));
-            GUILayout.Label($" ", GUILayout.ExpandWidth(false));
-            GUILayout.EndHorizontal();
-            #endregion
-            #region Unicode Number
-            GUILayout.BeginHorizontal();
-            DrawBulletPoint("#0062ff");
-            GUILayout.Label($"Unicode Number: ", GUILayout.ExpandWidth(false));
-            GUI.backgroundColor = AddColor("#0062ff") * 2f;
-            GUI.contentColor = AddColor(Color.white);
-            GUIContent unicodeNumContent = new GUIContent(CharToUnicode(selectedSymbol), copyTooltip);
-            if (GUILayout.Button(unicodeNumContent, GUILayout.ExpandWidth(false)))
-            {
-                CopyToClipboard(unicodeNumContent.text);
-            }
-            GUI.contentColor = Color.white;
+            GUILayout.BeginVertical();
+            #region Preview Box
+            GUI.backgroundColor = AddColor(mainColorStyle) * 3.75f;
+            GUILayout.BeginVertical(GUI.skin.box);
             GUI.backgroundColor = Color.white;
-            GUILayout.EndHorizontal();
-            #endregion
-            #region Decimal
-            GUILayout.BeginHorizontal();
-            DrawBulletPoint("#0062ff");
-            GUILayout.Label($"Decimal: {CharToDecimal(selectedSymbol)}");
-            GUILayout.EndHorizontal();
-            #endregion
-            #region Hexadecimal
-            GUILayout.BeginHorizontal();
-            DrawBulletPoint("#0062ff");
-            GUILayout.Label($"Hexadecimal: {UnicodeToHexCode(selectedSymbol)}");
-            GUILayout.EndHorizontal();
-            #endregion
-            #region Octal
-            GUILayout.BeginHorizontal();
-            DrawBulletPoint("#0062ff");
-            GUILayout.Label($"Octal: {CharToOctal(selectedSymbol)}");
-            GUILayout.EndHorizontal();
-            #endregion
-            #region HTML Code
-            GUILayout.BeginHorizontal();
-            DrawBulletPoint("#0062ff");
-            GUILayout.Label($"HTML Code: ", GUILayout.ExpandWidth(false));
-            GUI.backgroundColor = AddColor("#0062ff") * 2f;
-            GUI.contentColor = AddColor(Color.white);
-            GUIContent htmlCodeContent = new GUIContent(CharToHTML(selectedSymbol), copyTooltip);
-            if (GUILayout.Button(htmlCodeContent, GUILayout.ExpandWidth(false)))
-            {
-                CopyToClipboard(htmlCodeContent.text);
-            }
-            GUI.contentColor = Color.white;
+            symbolPreviewStyle.normal.textColor = Color.white;
+            GUILayout.Label(selectedSymbol.ToString(), symbolPreviewStyle, GUILayout.Height(96f));
+            GUI.backgroundColor = AddColor(mainColorStyle) * 3.75f;
+            previewHeaderStyle.normal.textColor = Color.white;
+            GUILayout.Label(CharToUnicode(selectedSymbol), previewHeaderStyle);
             GUI.backgroundColor = Color.white;
-            GUILayout.EndHorizontal();
-            #endregion
-            #region CSS Code
-            GUILayout.BeginHorizontal();
-            DrawBulletPoint("#0062ff");
-            GUILayout.Label($"CSS Code: ", GUILayout.ExpandWidth(false));
-            GUI.backgroundColor = AddColor("#0062ff") * 2f;
-            GUI.contentColor = AddColor(Color.white);
-            GUIContent cssCodeContent = new GUIContent(CharToCSS(selectedSymbol), copyTooltip);
-            if (GUILayout.Button(cssCodeContent, GUILayout.ExpandWidth(false)))
-            {
-                CopyToClipboard(cssCodeContent.text);
-            }
-            GUI.contentColor = Color.white;
-            GUI.backgroundColor = Color.white;
-            GUILayout.EndHorizontal();
-            #endregion
-
-            GUI.contentColor = Color.white;
             GUILayout.EndVertical();
-        }
-        #endregion
-        //
-        GUILayout.EndVertical();
-        #endregion
 
-        DrawLine(GetColorFromHexString("#555555"), 1, 4f);
+            GUILayout.BeginHorizontal();
+            #region Previous Symbol
+            GUIContent prevSymbolContent = new GUIContent("◀", "");
+            GUI.backgroundColor = AddColor(mainColorStyle) * 1.75f;
+            bool onPrevSymbolClick = GUILayout.Button(prevSymbolContent, sideButtonStyle);
+            GUI.backgroundColor = Color.white;
+            if (onPrevSymbolClick)
+            {
+                PreviousSymbol();
+            }
+            #endregion
 
-        GUI.backgroundColor = AddColor("#0062ff") * 2f;
+            #region Copy
+            var copyIcon = (Texture2D)AssetDatabase.LoadAssetAtPath(copyIconPath, typeof(Texture2D));
+            EditorGUIUtility.SetIconSize(new Vector2(24f, 24f));
 
-        GUIStyle categoryStyle = new GUIStyle(GUI.skin.button)
-        {
-            fontStyle = FontStyle.Bold,
-            fontSize = 16,
-            fixedHeight = 24,
-            stretchWidth = true,
-            stretchHeight = false,
-            alignment = TextAnchor.MiddleCenter
-        };
+            GUIContent copyContent = new GUIContent(" Copy", copyIcon, copySymbolTooltip);
+            GUI.backgroundColor = AddColor(mainColorStyle) * 1.75f;
+            bool onCopyClick = GUILayout.Button(copyContent, copyButtonStyle);
+            GUI.backgroundColor = Color.white;
+            if (onCopyClick)
+            {
+                ShowCopyContextMenu(selectedSymbol);
+                CopyToClipboard(selectedSymbol.ToString());
+            }
+            #endregion
 
-        GUI.backgroundColor = HasFavoriteSymbol(selectedSymbol) ? AddColor("#000842") : AddColor("#0062ff") * 2f;
-        GUI.contentColor = HasFavoriteSymbol(selectedSymbol) ? Color.white : Color.white;
-        GUILayout.BeginArea(new Rect(position.width - 40f, 34f, 36f, 36f));
-        GUIContent favoriteButtonContent = new GUIContent(HasFavoriteSymbol(selectedSymbol) ? "★" : "☆", favoriteButtonTooltip);
-        if (GUILayout.Toggle(false, favoriteButtonContent, favoriteButtonStyle))
-        {
-            ToggleFavorite();
-        }
-        GUILayout.EndArea();
-        GUI.contentColor = Color.white;
-        GUI.backgroundColor = AddColor("#0062ff") * 2f;
+            #region Next Symbol
+            GUIContent nextSymbolContent = new GUIContent("▶", "");
+            GUI.backgroundColor = AddColor(mainColorStyle) * 1.75f;
+            bool onNextSymbolClick = GUILayout.Button(nextSymbolContent, sideButtonStyle);
+            GUI.backgroundColor = Color.white;
+            if (onNextSymbolClick)
+            {
+                NextSymbol();
+            }
+            #endregion
+            GUILayout.EndHorizontal();
 
-        string[] categoryNames = new string[]
-        {
+            DrawLine(GetColorFromHexString("#555555"), 1, 4f);
+
+            #region Symbol Information
+            GUILayout.BeginVertical(EditorStyles.helpBox);
+            infoFoldout = EditorGUILayout.Foldout(infoFoldout, "ⓘ Symbol Information", true);
+            if (infoFoldout)
+            {
+                GUILayout.BeginVertical(EditorStyles.helpBox);
+                #region Symbol
+                GUILayout.BeginHorizontal();
+                DrawBulletPoint(mainColorStyle);
+                GUILayout.Label($"Symbol: ", GUILayout.ExpandWidth(false));
+                GUILayout.Label($"{selectedSymbol}", GUILayout.ExpandWidth(false));
+                GUILayout.EndHorizontal();
+                #endregion
+                #region Name
+                GUILayout.BeginHorizontal();
+                DrawBulletPoint(mainColorStyle);
+                GUILayout.Label($"Name: {AllUnicodeNames[selectedSymbol]}", GUILayout.ExpandWidth(false));
+                GUILayout.Label($" ", GUILayout.ExpandWidth(false));
+                GUILayout.EndHorizontal();
+                #endregion
+                #region Unicode Number
+                GUILayout.BeginHorizontal();
+                DrawBulletPoint(mainColorStyle);
+                GUILayout.Label($"Unicode Number: ", GUILayout.ExpandWidth(false));
+                GUI.backgroundColor = AddColor(mainColorStyle) * 2f;
+                GUI.contentColor = AddColor(Color.white);
+                GUIContent unicodeNumContent = new GUIContent(CharToUnicode(selectedSymbol), copyTooltip);
+                if (GUILayout.Button(unicodeNumContent, GUILayout.ExpandWidth(false)))
+                {
+                    CopyToClipboard(unicodeNumContent.text);
+                }
+                GUI.contentColor = Color.white;
+                GUI.backgroundColor = Color.white;
+                GUILayout.EndHorizontal();
+                #endregion
+                #region Decimal
+                GUILayout.BeginHorizontal();
+                DrawBulletPoint(mainColorStyle);
+                GUILayout.Label($"Decimal: {CharToDecimal(selectedSymbol)}");
+                GUILayout.EndHorizontal();
+                #endregion
+                #region Hexadecimal
+                GUILayout.BeginHorizontal();
+                DrawBulletPoint(mainColorStyle);
+                GUILayout.Label($"Hexadecimal: {UnicodeToHexCode(selectedSymbol)}");
+                GUILayout.EndHorizontal();
+                #endregion
+                #region Octal
+                GUILayout.BeginHorizontal();
+                DrawBulletPoint(mainColorStyle);
+                GUILayout.Label($"Octal: {CharToOctal(selectedSymbol)}");
+                GUILayout.EndHorizontal();
+                #endregion
+                #region HTML Code
+                GUILayout.BeginHorizontal();
+                DrawBulletPoint(mainColorStyle);
+                GUILayout.Label($"HTML Code: ", GUILayout.ExpandWidth(false));
+                GUI.backgroundColor = AddColor(mainColorStyle) * 2f;
+                GUI.contentColor = AddColor(Color.white);
+                GUIContent htmlCodeContent = new GUIContent(CharToHTML(selectedSymbol), copyTooltip);
+                if (GUILayout.Button(htmlCodeContent, GUILayout.ExpandWidth(false)))
+                {
+                    CopyToClipboard(htmlCodeContent.text);
+                }
+                GUI.contentColor = Color.white;
+                GUI.backgroundColor = Color.white;
+                GUILayout.EndHorizontal();
+                #endregion
+                #region CSS Code
+                GUILayout.BeginHorizontal();
+                DrawBulletPoint(mainColorStyle);
+                GUILayout.Label($"CSS Code: ", GUILayout.ExpandWidth(false));
+                GUI.backgroundColor = AddColor(mainColorStyle) * 2f;
+                GUI.contentColor = AddColor(Color.white);
+                GUIContent cssCodeContent = new GUIContent(CharToCSS(selectedSymbol), copyTooltip);
+                if (GUILayout.Button(cssCodeContent, GUILayout.ExpandWidth(false)))
+                {
+                    CopyToClipboard(cssCodeContent.text);
+                }
+                GUI.contentColor = Color.white;
+                GUI.backgroundColor = Color.white;
+                GUILayout.EndHorizontal();
+                #endregion
+
+                GUI.contentColor = Color.white;
+                GUILayout.EndVertical();
+            }
+            #endregion
+            GUILayout.EndVertical();
+            #endregion
+
+            DrawLine(GetColorFromHexString("#555555"), 1, 4f);
+
+            GUI.backgroundColor = AddColor(mainColorStyle) * 2f;
+
+            GUIStyle categoryStyle = new GUIStyle(GUI.skin.button)
+            {
+                fontStyle = FontStyle.Bold,
+                fontSize = 16,
+                fixedHeight = 24,
+                stretchWidth = true,
+                stretchHeight = false,
+                alignment = TextAnchor.MiddleCenter
+            };
+
+            GUI.backgroundColor = HasFavoriteSymbol(selectedSymbol) ? AddColor("#000842") : AddColor(mainColorStyle) * 2f;
+            GUI.contentColor = HasFavoriteSymbol(selectedSymbol) ? Color.white : Color.white;
+            GUILayout.BeginArea(new Rect(position.width - 40f, 34f, 36f, 36f));
+            GUIContent favoriteButtonContent = new GUIContent(HasFavoriteSymbol(selectedSymbol) ? "★" : "☆", favoriteButtonTooltip);
+            if (GUILayout.Toggle(false, favoriteButtonContent, favoriteButtonStyle))
+            {
+                ToggleFavorite();
+            }
+            GUILayout.EndArea();
+            GUI.contentColor = Color.white;
+            GUI.backgroundColor = AddColor(mainColorStyle) * 2f;
+
+            string[] categoryNames = new string[]
+            {
             $"All ({AllUnicodeNames.Count})",
             $"ASCII-Printable ({ASCIIPrintableNames.Count})",
             $"Currency ({CurrencyNames.Count})",
@@ -904,55 +967,81 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             $"Musical ({MusicalNames.Count})",
             $"Other ({OtherNames.Count})",
             $"★ Favorites ({favoriteUnicodeSymbols.Count})"
-        };
-        GUI.contentColor = AddColor(Color.white);
-        unicodeCategory = (UnicodeCategory)EditorGUILayout.Popup((int)unicodeCategory, categoryNames);
-        GUI.backgroundColor = Color.white;
+            };
+            GUI.contentColor = AddColor(Color.white);
+            unicodeCategory = (UnicodeCategory)EditorGUILayout.Popup((int)unicodeCategory, categoryNames);
+            GUI.backgroundColor = Color.white;
 
-        GUILayout.Space(8f);
+            GUILayout.Space(8f);
 
-        // Update scroll position in the editor window.
-        scrollPosition = GUILayout.BeginScrollView(scrollPosition, true, false, GUI.skin.horizontalScrollbar, GUIStyle.none);
-        SetupUnicodeTable();
-        
-        GUILayout.EndScrollView();
-        GUILayout.EndVertical();
-    }
+            // Update scroll position in the editor window.
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition, true, false, GUI.skin.horizontalScrollbar, GUIStyle.none);
+            SetupUnicodeTable();
 
-    /// <summary>
-    /// Initialize list of Unicode symbols.
-    /// </summary>
-    private void InitializeUnicodeSymbols()
-    {
-        // Initialize Unicode symbols list ONLY when the user first opens the editor window.
-        //if (unicodeSymbolsInitialized)
-        //    return;
-
-        char startChar = ' ';
-        int numOfUnicodeSymbols = rowCount * columnCount;
-
-        // Initialize list.
-        if (unicodeSymbols == null)
-        {
-            unicodeSymbols = new List<char>();
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
         }
-        else if (unicodeSymbols.Count > 0)
+        else
         {
-            selectedSymbol = unicodeSymbols[selectedIndex];
-            return;
+            GUIStyle swatchStyle = new GUIStyle(GUI.skin.button)
+            {
+                fontStyle = FontStyle.Bold,
+                fontSize = 24,
+                fixedWidth = 47f,
+                fixedHeight = 47f,
+                stretchWidth = true,
+                stretchHeight = true,
+                alignment = TextAnchor.MiddleCenter
+            };
+
+
+            GUILayout.BeginVertical(EditorStyles.helpBox);
+            GUI.contentColor = Color.white;
+            GUILayout.Label("Color Styles", colorLabelStyle, GUILayout.ExpandWidth(false));
+            DrawLine(GetColorFromHexString("#555555"), 1, 4f);
+            GUILayout.Label("Choose a color style.", GUILayout.ExpandWidth(false));
+
+            for (int x = 0; x < 2; x++)
+            {
+                GUILayout.BeginHorizontal();
+                for (int y = 0; y < 8; y++)
+                {
+                    int index = y + (8 * x);
+                    GUI.backgroundColor = AddColor(ColorStyles[index]) * 1.75f;
+                    string checkmark = mainColorStyle.Equals(ColorStyles[index]) ? "✓" : string.Empty;
+                    if (GUILayout.Button(checkmark, swatchStyle))
+                    {
+                        SetColorStyle(index);
+                    }
+                    GUI.backgroundColor = Color.white;
+                }
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.EndVertical();
+
+            DrawLine(GetColorFromHexString("#555555"), 1, 4f);
+
+            #region Delete All Favorites
+            GUI.backgroundColor = AddColor(mainColorStyle) * 1.75f;
+            GUIContent deleteFavoritesContent = new GUIContent("Delete All Favorites", deleteAllFavoritesTooltip);
+            bool onDeleteClick = GUILayout.Button(deleteFavoritesContent, settingSubButtonStyle);
+            if (onDeleteClick)
+            {
+
+            }
+            GUI.backgroundColor = Color.white;
+            #endregion
+            #region Documentation
+            GUI.backgroundColor = AddColor(mainColorStyle) * 1.75f;
+            GUIContent documentationContent = new GUIContent("Documentation", documentationTooltip);
+            bool onDocumentationClick = GUILayout.Button(documentationContent, settingSubButtonStyle);
+            if (onDocumentationClick)
+            {
+                OpenDocumentation();
+            }
+            GUI.backgroundColor = Color.white;
+            #endregion
         }
-
-        for (int i = 0; i < numOfUnicodeSymbols; i++)
-        {
-            char us = startChar++;
-            if (unicodeSymbols.Contains(us))
-                continue;
-
-            unicodeSymbols.Add(us);
-        }
-
-        selectedSymbol = unicodeSymbols[selectedIndex];
-        unicodeSymbolsInitialized = true;
     }
 
     /// <summary>
@@ -984,7 +1073,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     allSymbols.Add(ch);
                 }
-                DrawUnicodeTable(6, 40, allSymbols);
+                DrawUnicodeTable(6, 65, allSymbols);
                 break;
             case UnicodeCategory.ASCII:
                 List<char> asciiPrintableSymbols = new List<char>();
@@ -1166,6 +1255,30 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             current.Use();
         }
     }
+
+    #region Settings Method(s)
+    /// <summary>
+    /// Set the main color style of the editor window.
+    /// </summary>
+    /// <param name="colorStyleID">The ID of the color style (0-15).</param>
+    private void SetColorStyle(int colorStyleID)
+    {
+        mainColorStyle = ColorStyles[colorStyleID];
+    }
+
+    private void DeleteAllFavorites()
+    {
+
+    }
+
+    /// <summary>
+    /// Open the official documentation on how to use the Massive Unicode Symbols Table (MUST).
+    /// </summary>
+    private void OpenDocumentation()
+    {
+        Application.OpenURL("https://acrobat.adobe.com/link/track?uri=urn:aaid:scds:US:8f514fd9-e74f-3ca8-ad32-e89264461c24");
+    }
+    #endregion
 
     /// <summary>
     /// Add a Unicode symbol to the Favorites list. 
