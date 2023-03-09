@@ -515,12 +515,13 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     private GUIStyle favoriteButtonStyle;
     private GUIStyle tabButtonStyle;
     private GUIStyle copyButtonStyle;
-    private GUIStyle categoryButtonStyle;
     private GUIStyle sideButtonStyle;
     private GUIStyle previewHeaderStyle;
     private GUIStyle symbolPreviewStyle;
     private GUIStyle settingSubButtonStyle;
     private GUIStyle colorLabelStyle;
+    private GUIStyle swatchStyle;
+    private GUIStyle bulletPointStyle;
     #endregion
 
     private bool infoFoldout = false;
@@ -534,9 +535,10 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     private char selectedSymbol = ' ';
     private char favoriteSymbolPending = ' ';
     private int selectedIndex = 0;
+    private float windowWidth;
 
     #region Settings
-    private readonly string[] ColorStyles = new string[16]
+    private readonly string[] ColorStyles = new string[18]
     {
         "#ff3838",      // 0
         "#ff512e",      // 1
@@ -552,8 +554,10 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         "#1d8a7d",      // 11
         "#5a8f00",      // 12
         "#b08a64",      // 13
-        "#7c888f",      // 14
-        "#0a0c0d",      // 15
+        "#68768a",      // 14
+        "#486860",      // 15
+        "#847545",      // 16
+        "#767676",      // 17
     };
 
     private string mainColorStyle;
@@ -645,12 +649,20 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             window = GetWindow<MiniUnicodeSymbolsTableEditor>("Massive Unicode Symbols Table (MUST) V1.0");
         }
 
-        // Set minimum & maximum size of the editor window.
-        window.minSize = new Vector2(312f, 464f);
+        // Set minimum &maximum window size(Docked/ Windowed).
+        if (!window.docked)
+        {
+            window.minSize = new Vector2(312f, 312f);
+            window.maxSize = new Vector2(1920f, 1080f);
+        }
+
+        // Get the width of the editor window.
+        windowWidth = position.width;
 
         // Initialize various GUI Styles.
         InitializeGUIStyles();
 
+        // Initialize Unicode symbols chart based on the selected category.
         if (unicodeSymbols == null)
         {
             unicodeSymbols = new List<char>();
@@ -825,17 +837,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
             GUI.backgroundColor = AddColor(mainColorStyle) * 2f;
 
-            GUIStyle categoryStyle = new GUIStyle(GUI.skin.button)
-            {
-                fontStyle = FontStyle.Bold,
-                fontSize = 16,
-                fixedHeight = 24,
-                stretchWidth = true,
-                stretchHeight = false,
-                alignment = TextAnchor.MiddleCenter
-            };
-
-            GUI.backgroundColor = HasFavoriteSymbol(selectedSymbol) ? AddColor("#000842") : AddColor(mainColorStyle) * 2f;
+            GUI.backgroundColor = HasFavoriteSymbol(selectedSymbol) ? AddColor("#000000") : AddColor(mainColorStyle) * 2f;
             GUI.contentColor = HasFavoriteSymbol(selectedSymbol) ? Color.white : Color.white;
             GUILayout.BeginArea(new Rect(position.width - 40f, 34f, 36f, 36f));
             GUIContent favoriteButtonContent = new GUIContent(HasFavoriteSymbol(selectedSymbol) ? "★" : "☆", favoriteButtonTooltip);
@@ -849,20 +851,20 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
             string[] categoryNames = new string[]
             {
-            $"All ({AllUnicodeNames.Count})",
-            $"ASCII-Printable ({ASCIIPrintableNames.Count})",
-            $"Currency ({CurrencyNames.Count})",
-            $"Greek Letters ({GreekLetterNames.Count})",
-            $"Roman Numerals ({RomanNumeralNames.Count})",
-            $"Punctuation ({PunctuationNames.Count})",
-            $"Math ({MathNames.Count})",
-            $"Arrows ({ArrowNames.Count})",
-            $"Zodiac ({ZodiacNames.Count})",
-            $"Planets ({PlanetNames.Count})",
-            $"Playing Card Suits ({PlayingCardSuitNames.Count})",
-            $"Musical ({MusicalNames.Count})",
-            $"Other ({OtherNames.Count})",
-            $"★ Favorites ({favoriteUnicodeSymbols.Count})"
+                $"All ({AllUnicodeNames.Count})",
+                $"ASCII-Printable ({ASCIIPrintableNames.Count})",
+                $"Currency ({CurrencyNames.Count})",
+                $"Greek Letters ({GreekLetterNames.Count})",
+                $"Roman Numerals ({RomanNumeralNames.Count})",
+                $"Punctuation ({PunctuationNames.Count})",
+                $"Math ({MathNames.Count})",
+                $"Arrows ({ArrowNames.Count})",
+                $"Zodiac ({ZodiacNames.Count})",
+                $"Planets ({PlanetNames.Count})",
+                $"Playing Card Suits ({PlayingCardSuitNames.Count})",
+                $"Musical ({MusicalNames.Count})",
+                $"Other ({OtherNames.Count})",
+                $"★ Favorites ({favoriteUnicodeSymbols.Count})"
             };
             GUI.contentColor = AddColor(Color.white);
             unicodeCategory = (UnicodeCategory)EditorGUILayout.Popup((int)unicodeCategory, categoryNames);
@@ -871,48 +873,23 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             GUILayout.Space(8f);
 
             // Update scroll position in the editor window.
-            scrollPosition = GUILayout.BeginScrollView(scrollPosition, true, false, GUI.skin.horizontalScrollbar, GUIStyle.none);
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, true, GUIStyle.none, GUI.skin.verticalScrollbar);
             SetupUnicodeTable();
+            GUILayout.FlexibleSpace();
 
             GUILayout.EndScrollView();
             GUILayout.EndVertical();
         }
         else
         {
-            GUIStyle swatchStyle = new GUIStyle(GUI.skin.button)
-            {
-                fontStyle = FontStyle.Bold,
-                fontSize = 24,
-                fixedWidth = 47f,
-                fixedHeight = 47f,
-                stretchWidth = true,
-                stretchHeight = true,
-                alignment = TextAnchor.MiddleCenter
-            };
-
-
             GUILayout.BeginVertical(EditorStyles.helpBox);
             GUI.contentColor = Color.white;
             GUILayout.Label("Color Styles", colorLabelStyle, GUILayout.ExpandWidth(false));
             DrawLine(GetColorFromHexString("#555555"), 1, 4f);
             GUILayout.Label("Choose a color style.", GUILayout.ExpandWidth(false));
 
-            for (int x = 0; x < 2; x++)
-            {
-                GUILayout.BeginHorizontal();
-                for (int y = 0; y < 8; y++)
-                {
-                    int index = y + (8 * x);
-                    GUI.backgroundColor = AddColor(ColorStyles[index]) * 1.75f;
-                    string checkmark = mainColorStyle.Equals(ColorStyles[index]) ? "✓" : string.Empty;
-                    if (GUILayout.Button(checkmark, swatchStyle))
-                    {
-                        SetColorStyle(index);
-                    }
-                    GUI.backgroundColor = Color.white;
-                }
-                GUILayout.EndHorizontal();
-            }
+            DrawColorStyles();
+
             GUILayout.EndVertical();
 
             DrawLine(GetColorFromHexString("#555555"), 1, 4f);
@@ -929,6 +906,9 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             GUI.enabled = true;
             GUI.backgroundColor = Color.white;
             #endregion
+
+            GUILayout.Space(2f);
+
             #region Documentation
             GUI.backgroundColor = AddColor(mainColorStyle) * 1.75f;
             GUIContent documentationContent = new GUIContent("Documentation", documentationTooltip);
@@ -1006,17 +986,6 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             fixedHeight = 36
         };
         #endregion
-        #region Category Button
-        categoryButtonStyle = new GUIStyle(GUI.skin.button)
-        {
-            fontStyle = FontStyle.Bold,
-            fontSize = 10,
-            stretchWidth = false,
-            fixedWidth = 64,
-            fixedHeight = 64,
-            alignment = TextAnchor.MiddleCenter
-        };
-        #endregion
         #region Side Button
         sideButtonStyle = new GUIStyle(GUI.skin.button)
         {
@@ -1066,6 +1035,18 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             alignment = TextAnchor.MiddleCenter
         };
         #endregion
+        #region Swatch
+        swatchStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 24,
+            fixedWidth = 47f,
+            fixedHeight = 47f,
+            stretchWidth = true,
+            stretchHeight = true,
+            alignment = TextAnchor.MiddleCenter
+        };
+        #endregion
     }
 
     /// <summary>
@@ -1083,7 +1064,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     allSymbols.Add(ch);
                 }
-                DrawUnicodeTable(6, 65, allSymbols);
+                DrawUnicodeTable(allSymbols);
                 break;
             // ASCII-Printable (95)
             case UnicodeCategory.ASCII:
@@ -1092,7 +1073,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     asciiPrintableSymbols.Add(ch);
                 }
-                DrawUnicodeTable(6, 16, asciiPrintableSymbols);
+                DrawUnicodeTable(asciiPrintableSymbols);
                 break;
             // Currency (38)
             case UnicodeCategory.Currency:
@@ -1101,7 +1082,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     currencySymbols.Add(ch);
                 }
-                DrawUnicodeTable(5, 10, currencySymbols);
+                DrawUnicodeTable(currencySymbols);
                 break;
             // Greek Letters (49)
             case UnicodeCategory.GreekLetters:
@@ -1110,7 +1091,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     greekLetterSymbols.Add(ch);
                 }
-                DrawUnicodeTable(5, 10, greekLetterSymbols);
+                DrawUnicodeTable(greekLetterSymbols);
                 break;
             // Roman Numerals (37)
             case UnicodeCategory.RomanNumerals:
@@ -1119,7 +1100,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     romanNumeralSymbols.Add(ch);
                 }
-                DrawUnicodeTable(5, 10, romanNumeralSymbols);
+                DrawUnicodeTable(romanNumeralSymbols);
                 break;
             // Punctuation (34)
             case UnicodeCategory.Punctuation:
@@ -1128,7 +1109,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     punctuationSymbols.Add(ch);
                 }
-                DrawUnicodeTable(4, 10, punctuationSymbols);
+                DrawUnicodeTable(punctuationSymbols);
                 break;
             // Math (90)
             case UnicodeCategory.Math:
@@ -1137,7 +1118,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     mathSymbols.Add(ch);
                 }
-                DrawUnicodeTable(6, 15, mathSymbols);
+                DrawUnicodeTable(mathSymbols);
                 break;
             // Arrows (12)
             case UnicodeCategory.Arrows:
@@ -1146,7 +1127,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     arrowSymbols.Add(ch);
                 }
-                DrawUnicodeTable(2, 10, arrowSymbols);
+                DrawUnicodeTable(arrowSymbols);
                 break;
             // Zodiac (12)
             case UnicodeCategory.Zodiac:
@@ -1155,7 +1136,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     zodiacSymbols.Add(ch);
                 }
-                DrawUnicodeTable(2, 10, zodiacSymbols);
+                DrawUnicodeTable(zodiacSymbols);
                 break;
             // Planets (12)
             case UnicodeCategory.Planets:
@@ -1164,7 +1145,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     planetSymbols.Add(ch);
                 }
-                DrawUnicodeTable(2, 10, planetSymbols);
+                DrawUnicodeTable(planetSymbols);
                 break;
             // Playing Card Suits (8)
             case UnicodeCategory.PlayingCardSuits:
@@ -1173,7 +1154,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     playingCardSuitSymbols.Add(ch);
                 }
-                DrawUnicodeTable(1, playingCardSuitSymbols.Count, playingCardSuitSymbols);
+                DrawUnicodeTable(playingCardSuitSymbols);
                 break;
             // Musical (7)
             case UnicodeCategory.Musical:
@@ -1182,7 +1163,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     musicalSymbols.Add(ch);
                 }
-                DrawUnicodeTable(1, 10, musicalSymbols);
+                DrawUnicodeTable(musicalSymbols);
                 break;
             // Other (18)
             case UnicodeCategory.Other:
@@ -1191,13 +1172,13 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 {
                     otherSymbols.Add(ch);
                 }
-                DrawUnicodeTable(2, 10, otherSymbols);
+                DrawUnicodeTable(otherSymbols);
                 break;
             // Favorites
             case UnicodeCategory.Favorites:
                 if (favoriteUnicodeSymbols.Count == 0)
                     break;
-                DrawUnicodeTable(5, 10, favoriteUnicodeSymbols);
+                DrawUnicodeTable(favoriteUnicodeSymbols);
                 break;
         }
     }
@@ -1441,19 +1422,19 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// <summary>
     /// Draw the Unicode table in the editor window.
     /// </summary>
-    /// <param name="rows">Number of rows.</param>
-    /// <param name="columns">Number of columns.</param>
     /// <param name="characters">List of Unicode character symbols.</param>
-    private void DrawUnicodeTable(int rows, int columns, List<char> characters)
+    private void DrawUnicodeTable(List<char> characters)
     {
         bool lastSymbolButton = false;
+        int numOfColumns = (int)(windowWidth / 31f);
+        int numOfRows = Mathf.CeilToInt((float)characters.Count / (float)numOfColumns);
 
-        for (int y = 0; y < rows; y++)
+        for (int y = 0; y < numOfRows; y++)
         {
             GUILayout.BeginHorizontal();
-            for (int x = 0; x < columns; x++)
+            for (int x = 0; x < numOfColumns; x++)
             {
-                int index = x + (columns * y);
+                int index = x + (numOfColumns * y);
                 lastSymbolButton = index == characters.Count - 1;
                 char us = characters[index];
                 if (!unicodeSymbols.Contains(us))
@@ -1515,10 +1496,10 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// </summary>
     /// <param name="bulletPointColor">Bullet point color string (Hexadecimal).</param>
     /// <param name="indents">Indention level. Default: 0</param>
-    private static void DrawBulletPoint(string bulletPointColor, int indents = 0)
+    private void DrawBulletPoint(string bulletPointColor, int indents = 0)
     {
         // GUI Style: Bullet Point
-        GUIStyle bulletPointStyle = new GUIStyle(GUI.skin.label)
+        bulletPointStyle = new GUIStyle(GUI.skin.label)
         {
             fontSize = 12,
             stretchWidth = true,
@@ -1530,6 +1511,40 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         GUI.contentColor = AddColor(bulletPointColor);
         GUILayout.Label("•", bulletPointStyle);
         GUI.contentColor = Color.white;
+    }
+
+    /// <summary>
+    /// Draw all selectable color styles in the editor window.
+    /// </summary>
+    private void DrawColorStyles()
+    {
+        bool lastSymbolButton = false;
+        int numOfColumns = (int)(windowWidth / 51.1f);
+        int numOfRows = Mathf.CeilToInt((float)ColorStyles.Length / (float)numOfColumns);
+
+        for (int x = 0; x < numOfRows; x++)
+        {
+            GUILayout.BeginHorizontal();
+            for (int y = 0; y < numOfColumns; y++)
+            {
+                int index = y + (numOfColumns * x);
+                lastSymbolButton = index == ColorStyles.Length - 1;
+                GUI.backgroundColor = AddColor(ColorStyles[index]) * 1.75f;
+                string checkmark = mainColorStyle.Equals(ColorStyles[index]) ? "✓" : string.Empty;
+                if (GUILayout.Button(checkmark, swatchStyle))
+                {
+                    SetColorStyle(index);
+                }
+                GUI.backgroundColor = Color.white;
+
+                if (lastSymbolButton)
+                    break;
+            }
+            GUILayout.EndHorizontal();
+
+            if (lastSymbolButton)
+                break;
+        }
     }
     #endregion
 
