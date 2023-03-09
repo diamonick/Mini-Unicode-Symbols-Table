@@ -1022,13 +1022,15 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             DrawLine(GetColorFromHexString("#555555"), 1, 4f);
 
             #region Delete All Favorites
-            GUI.backgroundColor = AddColor(mainColorStyle) * 1.75f;
+            GUI.enabled = favoriteUnicodeSymbols.Count != 0;
+            GUI.backgroundColor = GUI.enabled ? AddColor(mainColorStyle) * 1.75f : Color.white;
             GUIContent deleteFavoritesContent = new GUIContent("Delete All Favorites", deleteAllFavoritesTooltip);
             bool onDeleteClick = GUILayout.Button(deleteFavoritesContent, settingSubButtonStyle);
             if (onDeleteClick)
             {
-
+                DeleteAllFavorites();
             }
+            GUI.enabled = true;
             GUI.backgroundColor = Color.white;
             #endregion
             #region Documentation
@@ -1049,6 +1051,9 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// </summary>
     private void NextSymbol()
     {
+        if (unicodeSymbols.Count == 0)
+            return;
+
         selectedIndex = Mathf.Clamp(selectedIndex + 1, 0, unicodeSymbols.Count - 1);
         selectedSymbol = unicodeSymbols[selectedIndex];
     }
@@ -1058,6 +1063,9 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// </summary>
     private void PreviousSymbol()
     {
+        if (unicodeSymbols.Count == 0)
+            return;
+
         selectedIndex = Mathf.Clamp(selectedIndex - 1, 0, unicodeSymbols.Count - 1);
         selectedSymbol = unicodeSymbols[selectedIndex];
     }
@@ -1172,6 +1180,8 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 DrawUnicodeTable(2, 10, otherSymbols);
                 break;
             case UnicodeCategory.Favorites:
+                if (favoriteUnicodeSymbols.Count == 0)
+                    break;
                 DrawUnicodeTable(5, 10, favoriteUnicodeSymbols);
                 break;
         }
@@ -1205,6 +1215,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         }
     }
 
+    #region Copy Method(s)
     /// <summary>
     /// Copies a string to the Clipboard.
     /// </summary>
@@ -1216,11 +1227,25 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         window.ShowNotification(new GUIContent($"{s}\n\nCopied!"));
     }
 
+    /// <summary>
+    /// Copies the Unicode symbol to the Clipboard.
+    /// </summary>
     public void CopySymbol() => CopyToClipboard(selectedSymbol.ToString());
+    /// <summary>
+    /// Copies the Unicode string to the Clipboard.
+    /// </summary>
     public void CopyUnicode() => CopyToClipboard(CharToUnicode(selectedSymbol));
+    /// <summary>
+    /// Copies the HTML entity code (Hexadecimal) to the Clipboard.
+    /// </summary>
     public void CopyHexCode() => CopyToClipboard(CharToHTML(selectedSymbol));
+    /// <summary>
+    /// Copies the CSS code to the Clipboard.
+    /// </summary>
     public void CopyCSSCode() => CopyToClipboard(CharToCSS(selectedSymbol));
+    #endregion
 
+    #region Context Menu Method(s)
     public void ShowCopyContextMenu(char us)
     {
         // Get current event.
@@ -1255,6 +1280,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
             current.Use();
         }
     }
+    #endregion
 
     #region Settings Method(s)
     /// <summary>
@@ -1266,9 +1292,27 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         mainColorStyle = ColorStyles[colorStyleID];
     }
 
+    /// <summary>
+    /// Delete all Unicode symbols from ★ Favorites.
+    /// </summary>
     private void DeleteAllFavorites()
     {
+        List<char> favorites = new List<char>();
+        favorites.AddRange(favoriteUnicodeSymbols);
 
+        foreach (char favoriteSymbol in favorites)
+        {
+            favoriteSymbolPending = favoriteSymbol;
+            Debug.Log($"Symbol: {favoriteSymbolPending}");
+            RemoveFromFavorites(favoriteSymbol, false);
+        }
+
+
+        //ReassignFavoriteSymbolKeys();
+        favorites.Clear();
+
+        // Display quick notification.
+        window.ShowNotification(new GUIContent($"All ★ Favorites\nsymbols deleted!"));
     }
 
     /// <summary>
@@ -1309,32 +1353,38 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// </summary>
     public void RemoveFromFavorites()
     {
-        RemoveFromFavorites(favoriteSymbolPending);
+        RemoveFromFavorites(favoriteSymbolPending, true);
     }
 
     /// <summary>
     /// Remove a Unicode symbol from the Favorites list. 
     /// </summary>
-    public void RemoveFromFavorites(char us)
+    public void RemoveFromFavorites(char us, bool showNotification)
     {
         char character = us;
         if (!HasFavoriteSymbol(favoriteSymbolPending) || favoriteUnicodeSymbols.Count == 0)
+        {
+            Debug.Log("RETURN");
             return;
+        }
 
         MUSTEditorPrefs.DeleteKey(GetFavoriteSymbolKey(favoriteUnicodeSymbols.IndexOf(character)));
         favoriteUnicodeSymbols.Remove(character);
-
         ReassignFavoriteSymbolKeys();
 
         // Display quick notification.
-        window.ShowNotification(new GUIContent($"{character}\n\nRemoved from\n★ Favorites!"));
+        if (showNotification)
+        {
+            window.ShowNotification(new GUIContent($"{character}\n\nRemoved from\n★ Favorites!"));
+        }
     }
 
     public void ToggleFavorite()
     {
         if (HasFavoriteSymbol(selectedSymbol))
         {
-            RemoveFromFavorites(selectedSymbol);
+            favoriteSymbolPending = selectedSymbol;
+            RemoveFromFavorites(selectedSymbol, true);
         }
         else
         {
@@ -1365,7 +1415,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
     private bool HasFavoriteSymbol(char us)
     {
-        return favoriteUnicodeSymbols.Contains(selectedSymbol);
+        return favoriteUnicodeSymbols.Contains(us);
     }
 
     #region Conversion(s)
