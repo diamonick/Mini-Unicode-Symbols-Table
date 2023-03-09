@@ -504,12 +504,24 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     // Note: Make sure to import the package(s) under Assets to have all icons display properly in the edito window.
     private readonly string copyIconPath = "Assets/Mini Unicode Symbols Table/Textures/CopyIcon.png";
 
+    #region Tooltips
     private string copyTooltip = "Click to copy.";
     private string copySymbolTooltip = "Click this to copy the previewed Unicode symbol and paste it anywhere.";
     private string favoriteButtonTooltip = "Click this to add/remove this Unicode symbol to and from ★ Favorites.";
+    #endregion
 
+    #region GUI Styles
     private GUIStyle symbolButtonStyle;
+    private GUIStyle favoriteButtonStyle;
+    private GUIStyle tabButtonStyle;
     private GUIStyle copyButtonStyle;
+    private GUIStyle categoryButtonStyle;
+    private GUIStyle sideButtonStyle;
+    private GUIStyle previewHeaderStyle;
+    private GUIStyle symbolPreviewStyle;
+    private GUIStyle settingSubButtonStyle;
+    private GUIStyle colorLabelStyle;
+    #endregion
 
     private bool infoFoldout = false;
 
@@ -518,9 +530,6 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
     private List<char> unicodeSymbols;
     private List<char> favoriteUnicodeSymbols;
-    private bool unicodeSymbolsInitialized = false;
-    private readonly int rowCount = 10;
-    private readonly int columnCount = 100;
     private readonly int maxNumOfFavoriteSymbols = 50;
     private char selectedSymbol = ' ';
     private char favoriteSymbolPending = ' ';
@@ -548,6 +557,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     };
 
     private string mainColorStyle;
+    private readonly string PreferredColorStyleKey = "Preferred Color Style";
 
     #region Settings Tooltips
     private readonly string deleteAllFavoritesTooltip = "Click this button to delete all Unicode symbols from ★ Favorites.";
@@ -557,8 +567,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     #endregion
 
     /// <summary>
-    /// Display the Mini Unicode Symbols Table menu item. (Tools -> Mini Unicode Symbols Table)
-    /// Keyboard Shortcut: ctrl-alt-D (Windows), cmd-alt-D (macOS).
+    /// Display the Massive Unicode Symbols Table menu item. (Tools -> Massive Unicode Symbols Table)
     /// </summary>
     [MenuItem("Tools/Massive Unicode Symbols Table", false, 10)]
     public static void DisplayWindow()
@@ -572,68 +581,24 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         if (AllUnicodeNames == null)
         {
             AllUnicodeNames = new Dictionary<char, string>();
-            foreach (var pair in ASCIIPrintableNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
-            foreach (var pair in CurrencyNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
-            foreach (var pair in GreekLetterNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
-            foreach (var pair in RomanNumeralNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
-            foreach (var pair in PunctuationNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
-            foreach (var pair in MathNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
-            foreach (var pair in ArrowNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
-            foreach (var pair in ZodiacNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
-            foreach (var pair in PlanetNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
-            foreach (var pair in PlayingCardSuitNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
-            foreach (var pair in MusicalNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
-            foreach (var pair in OtherNames)
-            {
-                if (!AllUnicodeNames.ContainsKey(pair.Key))
-                    AllUnicodeNames.Add(pair.Key, pair.Value);
-            }
+
+            #region Add Categories
+            AddNames(ASCIIPrintableNames);          // Add ASCII-Printable names to global list.
+            AddNames(CurrencyNames);                // Add Currency names to global list.
+            AddNames(GreekLetterNames);             // Add Greek Letter names to global list.
+            AddNames(RomanNumeralNames);            // Add RRoman Numeral names to global list.
+            AddNames(PunctuationNames);             // Add Punctuation names to global list.
+            AddNames(MathNames);                    // Add Math names to global list.
+            AddNames(ArrowNames);                   // Add Arrow names to global list.
+            AddNames(ZodiacNames);                  // Add Zodiac names to global list.
+            AddNames(PlanetNames);                  // Add Planet names to global list.
+            AddNames(PlayingCardSuitNames);         // Add Playing Card Suit names to global list.
+            AddNames(MusicalNames);                 // Add Musical names to global list.
+            AddNames(OtherNames);                   // Add Other names to global list.
+            #endregion
         }
 
+        // Populate your favorite Unicode symbols to ★ Favorites.
         if (favoriteUnicodeSymbols == null)
         {
             favoriteUnicodeSymbols = new List<char>();
@@ -644,7 +609,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                     continue;
 
                 char ch = (char)MUSTEditorPrefs.GetInt(GetFavoriteSymbolKey(i));
-                if (ch == null)
+                if (ch == ' ')
                     continue;
 
                 favoriteUnicodeSymbols.Add(ch);
@@ -652,7 +617,21 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         }
 
         // Set the main color style of the editor window.
-        SetColorStyle(6);
+        int colorSytleID = MUSTEditorPrefs.HasKey(PreferredColorStyleKey) ? MUSTEditorPrefs.GetInt(PreferredColorStyleKey) : 4;
+        SetColorStyle(colorSytleID);
+    }
+
+    /// <summary>
+    /// Add the Unicode symbol naes from the given name list to the global list.
+    /// </summary>
+    /// <param name="nameList">List of Unicode symbol names.</param>
+    private void AddNames(Dictionary<char, string> nameList)
+    {
+        foreach (var pair in nameList)
+        {
+            if (!AllUnicodeNames.ContainsKey(pair.Key))
+                AllUnicodeNames.Add(pair.Key, pair.Value);
+        }
     }
 
     /// <summary>
@@ -669,91 +648,8 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         // Set minimum & maximum size of the editor window.
         window.minSize = new Vector2(312f, 464f);
 
-        // Initialize GUI style for a character symbol button.
-        symbolButtonStyle = new GUIStyle(GUI.skin.button)
-        {
-            fixedWidth = 28,
-            fixedHeight = 28,
-        };
-
-        GUIStyle favoriteButtonStyle = new GUIStyle(GUI.skin.button)
-        {
-            fontStyle = FontStyle.Bold,
-            fontSize = 20,
-            fixedWidth = 28,
-            fixedHeight = 28,
-        };
-
-        GUIStyle tabButtonStyle = new GUIStyle(GUI.skin.button)
-        {
-            fontStyle = FontStyle.Bold,
-            fontSize = 12,
-            fixedHeight = 20,
-            stretchWidth = true,
-            stretchHeight = false
-        };
-
-        copyButtonStyle = new GUIStyle(GUI.skin.button)
-        {
-            fontStyle = FontStyle.Bold,
-            fontSize = 24,
-            stretchWidth = true,
-            fixedHeight = 36
-        };
-
-        GUIStyle categoryButtonStyle = new GUIStyle(GUI.skin.button)
-        {
-            fontStyle = FontStyle.Bold,
-            fontSize = 10,
-            stretchWidth = false,
-            fixedWidth = 64,
-            fixedHeight = 64,
-            alignment = TextAnchor.MiddleCenter
-        };
-
-        GUIStyle sideButtonStyle = new GUIStyle(GUI.skin.button)
-        {
-            fontStyle = FontStyle.Bold,
-            fontSize = 16,
-            stretchWidth = false,
-            fixedWidth = 36,
-            fixedHeight = 36,
-            alignment = TextAnchor.MiddleCenter
-        };
-
-        GUIStyle previewHeaderStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontStyle = FontStyle.Normal,
-            fontSize = 12,
-            fixedHeight = 18,
-            stretchWidth = true,
-            stretchHeight = false,
-            alignment = TextAnchor.MiddleCenter
-        };
-
-        GUIStyle symbolPreviewStyle = new GUIStyle(GUI.skin.box)
-        {
-            fontStyle = FontStyle.Bold,
-            fontSize = 72,
-            stretchWidth = true,
-            stretchHeight = false,
-            alignment = TextAnchor.MiddleCenter
-        };
-
-        GUIStyle settingSubButtonStyle = new GUIStyle(GUI.skin.button)
-        {
-            fontStyle = FontStyle.Bold,
-            fontSize = 16,
-            fixedHeight = 36,
-            alignment = TextAnchor.MiddleCenter
-        };
-
-        GUIStyle colorLabelStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontStyle = FontStyle.Bold,
-            fontSize = 18,
-            alignment = TextAnchor.MiddleCenter
-        };
+        // Initialize various GUI Styles.
+        InitializeGUIStyles();
 
         if (unicodeSymbols == null)
         {
@@ -1070,11 +966,117 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         selectedSymbol = unicodeSymbols[selectedIndex];
     }
 
+    /// <summary>
+    /// Initialize GUI Styles.
+    /// </summary>
+    private void InitializeGUIStyles()
+    {
+        #region Symbol Button
+        symbolButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fixedWidth = 28,
+            fixedHeight = 28
+        };
+        #endregion
+        #region Favorite Button
+        favoriteButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 20,
+            fixedWidth = 28,
+            fixedHeight = 28
+        };
+        #endregion
+        #region Tab Button
+        tabButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 12,
+            fixedHeight = 20,
+            stretchWidth = true,
+            stretchHeight = false
+        };
+        #endregion
+        #region Copy Button
+        copyButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 24,
+            stretchWidth = true,
+            fixedHeight = 36
+        };
+        #endregion
+        #region Category Button
+        categoryButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 10,
+            stretchWidth = false,
+            fixedWidth = 64,
+            fixedHeight = 64,
+            alignment = TextAnchor.MiddleCenter
+        };
+        #endregion
+        #region Side Button
+        sideButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 16,
+            stretchWidth = false,
+            fixedWidth = 36,
+            fixedHeight = 36,
+            alignment = TextAnchor.MiddleCenter
+        };
+        #endregion
+        #region Preview Header
+        previewHeaderStyle = new GUIStyle(GUI.skin.label)
+        {
+            fontStyle = FontStyle.Normal,
+            fontSize = 12,
+            fixedHeight = 18,
+            stretchWidth = true,
+            stretchHeight = false,
+            alignment = TextAnchor.MiddleCenter
+        };
+        #endregion
+        #region Symbol Preview
+        symbolPreviewStyle = new GUIStyle(GUI.skin.box)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 72,
+            stretchWidth = true,
+            stretchHeight = false,
+            alignment = TextAnchor.MiddleCenter
+        };
+        #endregion
+        #region Setting Sub Button
+        settingSubButtonStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 16,
+            fixedHeight = 36,
+            alignment = TextAnchor.MiddleCenter
+        };
+        #endregion
+        #region Color Styles Label
+        colorLabelStyle = new GUIStyle(GUI.skin.label)
+        {
+            fontStyle = FontStyle.Bold,
+            fontSize = 18,
+            alignment = TextAnchor.MiddleCenter
+        };
+        #endregion
+    }
+
+    /// <summary>
+    /// Setup the Unicode table based on the selected category.
+    /// </summary>
     private void SetupUnicodeTable()
     {
         unicodeSymbols.Clear();
         switch (unicodeCategory)
         {
+            // All (390)
             case UnicodeCategory.All:
                 List<char> allSymbols = new List<char>();
                 foreach (char ch in AllUnicodeNames.Keys)
@@ -1083,6 +1085,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(6, 65, allSymbols);
                 break;
+            // ASCII-Printable (95)
             case UnicodeCategory.ASCII:
                 List<char> asciiPrintableSymbols = new List<char>();
                 foreach (char ch in ASCIIPrintableNames.Keys)
@@ -1091,6 +1094,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(6, 16, asciiPrintableSymbols);
                 break;
+            // Currency (38)
             case UnicodeCategory.Currency:
                 List<char> currencySymbols = new List<char>();
                 foreach (char ch in CurrencyNames.Keys)
@@ -1099,6 +1103,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(5, 10, currencySymbols);
                 break;
+            // Greek Letters (49)
             case UnicodeCategory.GreekLetters:
                 List<char> greekLetterSymbols = new List<char>();
                 foreach (char ch in GreekLetterNames.Keys)
@@ -1107,6 +1112,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(5, 10, greekLetterSymbols);
                 break;
+            // Roman Numerals (37)
             case UnicodeCategory.RomanNumerals:
                 List<char> romanNumeralSymbols = new List<char>();
                 foreach (char ch in RomanNumeralNames.Keys)
@@ -1115,6 +1121,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(5, 10, romanNumeralSymbols);
                 break;
+            // Punctuation (34)
             case UnicodeCategory.Punctuation:
                 List<char> punctuationSymbols = new List<char>();
                 foreach (char ch in PunctuationNames.Keys)
@@ -1123,6 +1130,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(4, 10, punctuationSymbols);
                 break;
+            // Math (90)
             case UnicodeCategory.Math:
                 List<char> mathSymbols = new List<char>();
                 foreach (char ch in MathNames.Keys)
@@ -1131,6 +1139,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(6, 15, mathSymbols);
                 break;
+            // Arrows (12)
             case UnicodeCategory.Arrows:
                 List<char> arrowSymbols = new List<char>();
                 foreach (char ch in ArrowNames.Keys)
@@ -1139,6 +1148,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(2, 10, arrowSymbols);
                 break;
+            // Zodiac (12)
             case UnicodeCategory.Zodiac:
                 List<char> zodiacSymbols = new List<char>();
                 foreach (char ch in ZodiacNames.Keys)
@@ -1147,6 +1157,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(2, 10, zodiacSymbols);
                 break;
+            // Planets (12)
             case UnicodeCategory.Planets:
                 List<char> planetSymbols = new List<char>();
                 foreach (char ch in PlanetNames.Keys)
@@ -1155,6 +1166,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(2, 10, planetSymbols);
                 break;
+            // Playing Card Suits (8)
             case UnicodeCategory.PlayingCardSuits:
                 List<char> playingCardSuitSymbols = new List<char>();
                 foreach (char ch in PlayingCardSuitNames.Keys)
@@ -1163,6 +1175,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(1, playingCardSuitSymbols.Count, playingCardSuitSymbols);
                 break;
+            // Musical (7)
             case UnicodeCategory.Musical:
                 List<char> musicalSymbols = new List<char>();
                 foreach (char ch in MusicalNames.Keys)
@@ -1171,6 +1184,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(1, 10, musicalSymbols);
                 break;
+            // Other (18)
             case UnicodeCategory.Other:
                 List<char> otherSymbols = new List<char>();
                 foreach (char ch in OtherNames.Keys)
@@ -1179,38 +1193,11 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
                 }
                 DrawUnicodeTable(2, 10, otherSymbols);
                 break;
+            // Favorites
             case UnicodeCategory.Favorites:
                 if (favoriteUnicodeSymbols.Count == 0)
                     break;
                 DrawUnicodeTable(5, 10, favoriteUnicodeSymbols);
-                break;
-        }
-    }
-
-    private void DrawUnicodeTable(int rows, int columns, List<char> characters)
-    {
-        bool lastSymbolButton = false;
-
-        for (int y = 0; y < rows; y++)
-        {
-            GUILayout.BeginHorizontal();
-            for (int x = 0; x < columns; x++)
-            {
-                int index = x + (columns * y);
-                lastSymbolButton = index == characters.Count - 1;
-                char us = characters[index];
-                if (!unicodeSymbols.Contains(us))
-                {
-                    unicodeSymbols.Add(us);
-                }
-                DrawSymbolButton(us);
-
-                if (lastSymbolButton)
-                    break;
-            }
-            GUILayout.EndHorizontal();
-
-            if (lastSymbolButton)
                 break;
         }
     }
@@ -1245,43 +1232,6 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     public void CopyCSSCode() => CopyToClipboard(CharToCSS(selectedSymbol));
     #endregion
 
-    #region Context Menu Method(s)
-    public void ShowCopyContextMenu(char us)
-    {
-        // Get current event.
-        Event current = Event.current;
-
-        if (current.button == 1)
-        {
-            GenericMenu menu = new GenericMenu();
-            AddMenuItem(menu, "Copy Symbol", CopySymbol);
-            AddMenuItem(menu, "Copy Unicode", CopyUnicode);
-            AddMenuItem(menu, "Copy HTML Code", CopyHexCode);
-            AddMenuItem(menu, "Copy CSS Code", CopyCSSCode);
-            menu.ShowAsContext();
-
-            current.Use();
-        }
-    }
-
-    public void ShowSymbolContextMenu(char us)
-    {
-        // Get current event.
-        Event current = Event.current;
-
-        if (current.button == 1)
-        {
-            GenericMenu menu = new GenericMenu();
-            favoriteSymbolPending = us;
-            AddMenuItem(menu, "Add to Favorites", AddToFavorites);
-            AddMenuItem(menu, "Remove from Favorites", RemoveFromFavorites);
-            menu.ShowAsContext();
-
-            current.Use();
-        }
-    }
-    #endregion
-
     #region Settings Method(s)
     /// <summary>
     /// Set the main color style of the editor window.
@@ -1290,6 +1240,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     private void SetColorStyle(int colorStyleID)
     {
         mainColorStyle = ColorStyles[colorStyleID];
+        MUSTEditorPrefs.SetInt(PreferredColorStyleKey, colorStyleID);
     }
 
     /// <summary>
@@ -1303,12 +1254,9 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         foreach (char favoriteSymbol in favorites)
         {
             favoriteSymbolPending = favoriteSymbol;
-            Debug.Log($"Symbol: {favoriteSymbolPending}");
             RemoveFromFavorites(favoriteSymbol, false);
         }
 
-
-        //ReassignFavoriteSymbolKeys();
         favorites.Clear();
 
         // Display quick notification.
@@ -1363,10 +1311,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     {
         char character = us;
         if (!HasFavoriteSymbol(favoriteSymbolPending) || favoriteUnicodeSymbols.Count == 0)
-        {
-            Debug.Log("RETURN");
             return;
-        }
 
         MUSTEditorPrefs.DeleteKey(GetFavoriteSymbolKey(favoriteUnicodeSymbols.IndexOf(character)));
         favoriteUnicodeSymbols.Remove(character);
@@ -1379,13 +1324,18 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         }
     }
 
+    /// <summary>
+    /// Toggle the Favorite button.
+    /// </summary>
     public void ToggleFavorite()
     {
+        // If the selected Unicode symbol is favorited, remove it from ★ Favorites.
         if (HasFavoriteSymbol(selectedSymbol))
         {
             favoriteSymbolPending = selectedSymbol;
             RemoveFromFavorites(selectedSymbol, true);
         }
+        // Otherwise, add the selected Unicode symbol to ★ Favorites.
         else
         {
             AddToFavorites(selectedSymbol);
@@ -1413,6 +1363,11 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         }
     }
 
+    /// <summary>
+    /// Check if the specified Unicode symbol is favorited in ★ Favorites.
+    /// </summary>
+    /// <param name="us">Unicode character symbol.</param>
+    /// <returns>TRUE if ★ Favorites contains the specified Unicode symbol. Otherwise, FALSE.</returns>
     private bool HasFavoriteSymbol(char us)
     {
         return favoriteUnicodeSymbols.Contains(us);
@@ -1484,9 +1439,43 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
     #region Draw Method(s)
     /// <summary>
+    /// Draw the Unicode table in the editor window.
+    /// </summary>
+    /// <param name="rows">Number of rows.</param>
+    /// <param name="columns">Number of columns.</param>
+    /// <param name="characters">List of Unicode character symbols.</param>
+    private void DrawUnicodeTable(int rows, int columns, List<char> characters)
+    {
+        bool lastSymbolButton = false;
+
+        for (int y = 0; y < rows; y++)
+        {
+            GUILayout.BeginHorizontal();
+            for (int x = 0; x < columns; x++)
+            {
+                int index = x + (columns * y);
+                lastSymbolButton = index == characters.Count - 1;
+                char us = characters[index];
+                if (!unicodeSymbols.Contains(us))
+                {
+                    unicodeSymbols.Add(us);
+                }
+                DrawSymbolButton(us);
+
+                if (lastSymbolButton)
+                    break;
+            }
+            GUILayout.EndHorizontal();
+
+            if (lastSymbolButton)
+                break;
+        }
+    }
+
+    /// <summary>
     /// Draw the specified Unicode character symbol on a button.
     /// </summary>
-    /// <param name="symbolCharacter">Unicode character symbol.</param>
+    /// <param name="us">Unicode character symbol.</param>
     private void DrawSymbolButton(char us)
     {
         if (GUILayout.Toggle(false, us.ToString(), symbolButtonStyle))
@@ -1545,12 +1534,48 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     #endregion
 
     #region Custom Context Menus
+
+    public void ShowCopyContextMenu(char us)
+    {
+        // Get current event.
+        Event current = Event.current;
+
+        if (current.button == 1)
+        {
+            GenericMenu menu = new GenericMenu();
+            AddMenuItem(menu, "Copy Symbol", CopySymbol);
+            AddMenuItem(menu, "Copy Unicode", CopyUnicode);
+            AddMenuItem(menu, "Copy HTML Code", CopyHexCode);
+            AddMenuItem(menu, "Copy CSS Code", CopyCSSCode);
+            menu.ShowAsContext();
+
+            current.Use();
+        }
+    }
+
+    public void ShowSymbolContextMenu(char us)
+    {
+        // Get current event.
+        Event current = Event.current;
+
+        if (current.button == 1)
+        {
+            GenericMenu menu = new GenericMenu();
+            favoriteSymbolPending = us;
+            AddMenuItem(menu, "Add to ★ Favorites", AddToFavorites);
+            AddMenuItem(menu, "Remove from ★ Favorites", RemoveFromFavorites);
+            menu.ShowAsContext();
+
+            current.Use();
+        }
+    }
+
     /// <summary>
     /// Add new menu item to a context menu.
     /// </summary>
-    /// <param name="menu"></param>
-    /// <param name="menuPath"></param>
-    /// <param name="color"></param>
+    /// <param name="menu">Context menu.</param>
+    /// <param name="menuPath">Menu path.</param>
+    /// <param name="method">The specified method to invoke when the user selects the menu item.</param>
     private void AddMenuItem(GenericMenu menu, string menuPath, GenericMenu.MenuFunction method)
     {
         menu.AddItem(new GUIContent(menuPath), false, method);
@@ -1606,6 +1631,4 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         return color;
     }
     #endregion
-
-    private void OnDisable() { }
 }
