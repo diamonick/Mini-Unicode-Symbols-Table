@@ -25,6 +25,7 @@ namespace MassiveUnicodeSymbolTable
                 sb.Append(data[i].ToString("x2"));
             return sb.ToString();
         }
+
         /**Unique id by project path, This id will be pre-pended to each key*/
         private static string mAppKey = null;
         /// <summary>
@@ -34,6 +35,7 @@ namespace MassiveUnicodeSymbolTable
         {
             mAppKey = GetMd5Hash(Application.dataPath) + "-";
         }
+
         /// <summary>
         /// Checks if the given key exists
         /// </summary>
@@ -43,6 +45,7 @@ namespace MassiveUnicodeSymbolTable
         {
             return EditorPrefs.HasKey(mAppKey + key);
         }
+
         /// <summary>
         /// Returns the value corresponding to key
         /// </summary>
@@ -53,6 +56,7 @@ namespace MassiveUnicodeSymbolTable
         {
             return EditorPrefs.GetString(mAppKey + key);
         }
+
         /// <summary>
         /// Returns the value corresponding to key if it exists, else returns default value
         /// </summary>
@@ -63,6 +67,7 @@ namespace MassiveUnicodeSymbolTable
         {
             return EditorPrefs.GetString(mAppKey + key, defaultValue);
         }
+
         /// <summary>
         /// Sets the value of the preference identified by key. Note that EditorPrefs does not support null strings and will store an empty string instead.
         /// <param name="key">key</param>
@@ -71,6 +76,7 @@ namespace MassiveUnicodeSymbolTable
         {
             EditorPrefs.SetString(mAppKey + key, value);
         }
+
         /// <summary>
         /// Returns the value corresponding to key
         /// </summary>
@@ -81,6 +87,7 @@ namespace MassiveUnicodeSymbolTable
         {
             return EditorPrefs.GetBool(mAppKey + key);
         }
+
         /// <summary>
         /// Returns the value corresponding to key if it exists, else default value
         /// </summary>
@@ -93,6 +100,7 @@ namespace MassiveUnicodeSymbolTable
                 return EditorPrefs.GetBool(mAppKey + key);
             return defaultValue;
         }
+
         /// <summary>
         /// Sets the value of the preference identified by key.
         /// </summary>
@@ -102,6 +110,7 @@ namespace MassiveUnicodeSymbolTable
         {
             EditorPrefs.SetBool(mAppKey + key, value);
         }
+
         /// <summary>
         /// Returns the value corresponding to key in the preference file if it exists.
         /// </summary>
@@ -112,6 +121,7 @@ namespace MassiveUnicodeSymbolTable
         {
             return EditorPrefs.GetInt(mAppKey + key);
         }
+
         /// <summary>
         /// Returns the value corresponding to key in the preference file if it exists else default value
         /// </summary>
@@ -124,6 +134,7 @@ namespace MassiveUnicodeSymbolTable
                 return EditorPrefs.GetInt(mAppKey + key);
             return defaultValue;
         }
+
         /// <summary>
         /// Sets the value of the preference identified by key as an integer.
         /// </summary>
@@ -133,6 +144,7 @@ namespace MassiveUnicodeSymbolTable
         {
             EditorPrefs.SetInt(mAppKey + key, value);
         }
+
         /// <summary>
         /// Returns the value corresponding to key in the preference file if it exists.
         /// </summary>
@@ -143,6 +155,7 @@ namespace MassiveUnicodeSymbolTable
         {
             return EditorPrefs.GetFloat(mAppKey + key);
         }
+
         /// <summary>
         /// Returns the value corresponding to key in the preference file if it exists else default value
         /// </summary>
@@ -155,6 +168,7 @@ namespace MassiveUnicodeSymbolTable
                 return EditorPrefs.GetFloat(mAppKey + key);
             return defaultValue;
         }
+
         /// <summary>
         /// Sets the value of the preference identified by key as a float.
         /// </summary>
