@@ -67,7 +67,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         {(char)60, "Less-than Sign"},
         {(char)61, "Equal Sign"},
         {(char)62, "Greater-than Sign"},
-        {(char)63, "Question mark"},
+        {(char)63, "Question Mark"},
         {(char)64, "Commercial At"},
         {(char)65, "Latin Capital Letter A"},
         {(char)66, "Latin Capital Letter B"},
@@ -502,7 +502,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
     // Icon paths
     // Note: Make sure to import the package(s) under Assets to have all icons display properly in the edito window.
-    private readonly string copyIconPath = "Assets/Mini Unicode Symbols Table/Textures/CopyIcon.png";
+    private readonly string copyIconPath = "Assets/Massive Unicode Symbol Table/Textures/CopyIcon.png";
 
     #region Tooltips
     private string copyTooltip = "Click to copy.";
@@ -566,17 +566,17 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     #region Settings Tooltips
     private readonly string deleteAllFavoritesTooltip = "Click this button to delete all Unicode symbols from ★ Favorites.";
     private readonly string documentationTooltip = "Click this button to see the official documentation on how to use " +
-                                                   "the Massive Unicode Symbols Table (MUST).";
+                                                   "the Massive Unicode Symbol Table (MUST).";
     #endregion
     #endregion
 
     /// <summary>
-    /// Display the Massive Unicode Symbols Table menu item. (Tools -> Massive Unicode Symbols Table)
+    /// Display the Massive Unicode Symbol Table menu item. (Tools -> Massive Unicode Symbol Table)
     /// </summary>
-    [MenuItem("Tools/Massive Unicode Symbols Table", false, 10)]
+    [MenuItem("Tools/Massive Unicode Symbol Table", false, 10)]
     public static void DisplayWindow()
     {
-        window = GetWindow<MiniUnicodeSymbolsTableEditor>("Massive Unicode Symbols Table (MUST) V1.0");
+        window = GetWindow<MiniUnicodeSymbolsTableEditor>("Massive Unicode Symbol Table (MUST) V1.0");
         //CreateInstance<MiniUnicodeSymbolsTableEditor>().Show();
     }
 
@@ -646,7 +646,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         // Get window.
         if (window == null)
         {
-            window = GetWindow<MiniUnicodeSymbolsTableEditor>("Massive Unicode Symbols Table (MUST) V1.0");
+            window = GetWindow<MiniUnicodeSymbolsTableEditor>("Massive Unicode Symbol Table (MUST) V1.0");
         }
 
         // Set minimum &maximum window size(Docked/ Windowed).
@@ -1245,7 +1245,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     }
 
     /// <summary>
-    /// Open the official documentation on how to use the Massive Unicode Symbols Table (MUST).
+    /// Open the official documentation on how to use the Massive Unicode Symbol Table (MUST).
     /// </summary>
     private void OpenDocumentation()
     {
