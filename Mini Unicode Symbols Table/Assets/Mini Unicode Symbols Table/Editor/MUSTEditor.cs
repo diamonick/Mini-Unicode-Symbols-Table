@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using MiniUnicodeSymbolsTable.Editor;
+using MassiveUnicodeSymbolTable;
 
-public class MiniUnicodeSymbolsTableEditor : EditorWindow
+public class MUSTEditor : EditorWindow
 {
     #region Enums
     public enum UnicodeCategory
@@ -497,8 +497,8 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
 
     private Dictionary<char, string> AllUnicodeNames;
 
-    private static MiniUnicodeSymbolsTableEditor window;    // Editor window
-    private Vector2 scrollPosition;                         // Current scroll position
+    private static MUSTEditor window;    // Editor window
+    private Vector2 scrollPosition;      // Current scroll position
 
     // Icon paths
     // Note: Make sure to import the package(s) under Assets to have all icons display properly in the edito window.
@@ -576,8 +576,8 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     [MenuItem("Tools/Massive Unicode Symbol Table", false, 10)]
     public static void DisplayWindow()
     {
-        window = GetWindow<MiniUnicodeSymbolsTableEditor>("Massive Unicode Symbol Table (MUST) V1.0");
-        //CreateInstance<MiniUnicodeSymbolsTableEditor>().Show();
+        window = GetWindow<MUSTEditor>("Massive Unicode Symbol Table (MUST) V1.0");
+        //CreateInstance<MUSTEditor>().Show();
     }
 
     private void OnEnable()
@@ -646,7 +646,7 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         // Get window.
         if (window == null)
         {
-            window = GetWindow<MiniUnicodeSymbolsTableEditor>("Massive Unicode Symbol Table (MUST) V1.0");
+            window = GetWindow<MUSTEditor>("Massive Unicode Symbol Table (MUST) V1.0");
         }
 
         // Set minimum &maximum window size(Docked/ Windowed).
@@ -1199,14 +1199,17 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     /// Copies the Unicode symbol to the Clipboard.
     /// </summary>
     public void CopySymbol() => CopyToClipboard(selectedSymbol.ToString());
+
     /// <summary>
     /// Copies the Unicode string to the Clipboard.
     /// </summary>
     public void CopyUnicode() => CopyToClipboard(CharToUnicode(selectedSymbol));
+
     /// <summary>
     /// Copies the HTML entity code (Hexadecimal) to the Clipboard.
     /// </summary>
     public void CopyHexCode() => CopyToClipboard(CharToHTML(selectedSymbol));
+
     /// <summary>
     /// Copies the CSS code to the Clipboard.
     /// </summary>
@@ -1323,8 +1326,16 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
         }
     }
 
+    /// <summary>
+    /// Get the specified favorite symbol key.
+    /// </summary>
+    /// <param name="value">Integer representation of the Unicode character.</param>
+    /// <returns>Favorite Unicode symbol key string.</returns>
     public string GetFavoriteSymbolKey(int value) => $"Favorite Symbol[{value}]";
 
+    /// <summary>
+    /// Reassign the user's favorite Unicode symbols by key string.
+    /// </summary>
     private void ReassignFavoriteSymbolKeys()
     {
         // Delete all key references of the user's favorite Unicode symbols from EditorPrefs.
@@ -1598,17 +1609,6 @@ public class MiniUnicodeSymbolsTableEditor : EditorWindow
     #endregion
 
     #region Miscellaneous
-    /// <summary>
-    /// Toggle wide mode for the Editor GUI.
-    /// </summary>
-    /// <param name="labelWidth">Minimum width (in pixels) for all labels.</param>
-    private static void ToggleWideMode(float labelWidth)
-    {
-        EditorGUIUtility.wideMode = !EditorGUIUtility.wideMode;
-        EditorGUIUtility.fieldWidth = 72;
-        EditorGUIUtility.labelWidth = labelWidth;
-    }
-
     /// <summary>
     /// Get color from hex string.
     /// </summary>

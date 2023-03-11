@@ -3,7 +3,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-namespace MiniUnicodeSymbolsTable.Editor
+namespace MassiveUnicodeSymbolTable
 {
     /// <summary>
     /// EditorPrefs data is common across projects, that means settings from one project will reflect in other, This wrapper class fixes that issue
