@@ -615,7 +615,7 @@ namespace MassiveUnicodeSymbolTable
                         continue;
 
                     char ch = (char)MUSTEditorPrefs.GetInt(GetFavoriteSymbolKey(i));
-                    if (ch == ' ')
+                    if (ch == (char)0)
                         continue;
 
                     favoriteUnicodeSymbols.Add(ch);
